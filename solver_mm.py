@@ -137,7 +137,11 @@ def solver_mm(nu_p, nu_g, Dnu_p, DPl, q, numin=1, numax=1500., resol=1, returns_
 
 	# Generate a frequency axis that has a fixed resolution and that span from numin to numax
 	nu=numpy.linspace(numin, numax, num=int((numax-numin)/resol))
-
+	print( " numin =" , numin )
+	print( " numax =", numax )
+	print( " resol =" , resol )
+	print("int((numax-numin)/resol) = " , int((numax-numin)/resol) )
+	
 	# Function p(nu) describing the p modes
 	pnu=pnu_fct(nu, nu_p)
 
@@ -158,8 +162,6 @@ def solver_mm(nu_p, nu_g, Dnu_p, DPl, q, numin=1, numax=1500., resol=1, returns_
 	#					as the minimum precision.
 	nu_m=[]
 	idx = numpy.argwhere(numpy.diff(numpy.sign(pnu - gnu))).flatten()
-	#print(numpy.diff(numpy.sign(pnu - gnu)))
-	#print('Indexes:', idx)
 	for ind in idx:
 		# Define a small local range around each of the best solutions
 		range_min=nu[ind] - 2*resol
@@ -168,8 +170,6 @@ def solver_mm(nu_p, nu_g, Dnu_p, DPl, q, numin=1, numax=1500., resol=1, returns_
 		nu_local=numpy.linspace(range_min, range_max, num=int((range_max-range_min)/(resol*factor)))
 		pnu_local=pnu_fct(nu_local, nu_p)
 		gnu_local=gnu_fct(nu_local, nu_g, Dnu_p, DPl, q)	
-
-
 		# Perform the interpolation on the local range and append the solution to the nu_m list
 		int_fct = interpolate.interp1d(pnu_local - gnu_local, nu_local)
 		nu_m_proposed=int_fct(0)
@@ -439,7 +439,7 @@ def test_rgb_solver_mm():
 
 	# Use the solver
 	q=0.1 # Fix the coupling term
-	nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DP1, q, numin=nu_p-Dnu_p/2, numax=nu_p + Dnu_p/2, resol=0.01, returns_axis=True)
+	nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DP1, q, numin=nu_p-Dnu_p/2, numax=nu_p + Dnu_p/2, resol=0.01, returns_axis=True, verbose=True)
 	#nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DP1, q, numin=1, numax=1000, resol=0.01, returns_pg_freqs=True)
 
 	# Plot the outputs to check intersection are properly found
@@ -447,6 +447,12 @@ def test_rgb_solver_mm():
 	plt.plot(nu,gnu, color='r')
 	plt.plot(nu_m, ysol, 'ro')
 	plt.show()
+
+	print('----')
+	print('nu_m')
+	for i in range(len(nu_m)):
+		print('[', i , '] ' , nu_m[i])
+	print('----')
 
 	return nu_m, ysol, nu,pnu, gnu
 	
@@ -470,7 +476,7 @@ def test_sg_solver_mm():
 
 	# Use the solver
 	q=0.2 # Fix the coupling term
-	nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DP1, q, numin=nu_p - Dnu_p/2, numax=nu_p + Dnu_p/2, resol=0.01, returns_axis=True)
+	nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DP1, q, numin=nu_p - Dnu_p/2, numax=nu_p + Dnu_p/2, resol=0.01, returns_axis=True, verbose=True)
 
 	# Plot the outputs to check that intersection are properly found
 	plt.plot(nu, pnu, color='b')
@@ -478,6 +484,12 @@ def test_sg_solver_mm():
 	plt.plot(nu_m, ysol, 'ro')
 	plt.show()
 
+	print('----')
+	print('nu_m')
+	for i in range(len(nu_m)):
+		print('[', i , '] ' , nu_m[i])
+	print('----')
+	
 	return nu_m, ysol, nu, pnu, gnu
 
 # Function to test solve_mm_asymptotic
