@@ -316,7 +316,7 @@ def solve_mm_asymptotic_O2p(Dnu_p, epsilon, el, delta0l, alpha_p, nmax, DPl, alp
 	np_max=int(numpy.ceil(fmax/Dnu_p - epsilon - el/2 - delta0l))
 
 	np_min=int(numpy.floor(np_min - alpha*(np_min - nmax)**2 /2.))
-	np_max=int(numpy.ceil(np_max - - alpha*(np_max - nmax)**2 /2.))
+	np_max=int(numpy.ceil(np_max - alpha*(np_max - nmax)**2 /2.))
 
 	ng_min=int(numpy.floor(1e6/(fmax*DPl) - alpha))
 	ng_max=int(numpy.ceil(1e6/(fmin*DPl) - alpha))
@@ -605,7 +605,10 @@ def test_asymptotic(el=1, Dnu_p=60, beta_p=0.0076, delta0l_percent=2., epsilon=0
 	np_min=int(numpy.floor(fmin/Dnu_p - epsilon - el/2 - delta0l))
 	np_max=int(numpy.ceil(fmax/Dnu_p - epsilon - el/2 - delta0l))
 	np_min=int(numpy.floor(np_min - beta_p*(np_min - nmax)**2 /2.))
-	np_max=int(numpy.ceil(np_max - - beta_p*(np_max - nmax)**2 /2.))
+	#np_max=int(numpy.ceil(np_max - - beta_p*(np_max - nmax)**2 /2.))
+	np_max=int(numpy.ceil(np_max - beta_p*(np_max - nmax)**2 /2.))
+	print('np_min=', np_min)
+	print('np_max=', np_max)
 
 	ng_min=int(numpy.floor(1e6/(fmax*DPl) - alpha_g))
 	ng_max=int(numpy.ceil(1e6/(fmin*DPl) - alpha_g))
@@ -634,6 +637,7 @@ def test_asymptotic(el=1, Dnu_p=60, beta_p=0.0076, delta0l_percent=2., epsilon=0
 	print('L(nu_p): ', len(freqs_l1_p))
 	print('L(nu_m): ', len(freqs_mixed))
 
+	print('nu_m:', freqs_mixed)	
 	plt.show()
 
 	return freqs_mixed

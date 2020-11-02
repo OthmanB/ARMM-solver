@@ -195,6 +195,34 @@ long double gnu_fct(const long double nu, const long double nu_g, const long dou
 	return gnu;
 }
 
+/* A small function that generate a serie of p modes using the asymptotic relation
+# at the second order as per defined in Mosser et al. 2018, equation 22 (https://www.aanda.org/articles/aa/pdf/2018/10/aa32777-18.pdf)
+# delta0l and alpha and nmax must be set, a
+# Note that we have the following relationship between D0 and delta0l:
+#			delta0l=-l(l+1) D0 / Dnu_p
+# Such that delta0l=-l(l+1) gamma / 100, if gamma is in % of Dnu_p
+*/
+long double asympt_nu_p(const long double Dnu_p, const int np, const long double epsilon, const int l, 
+	const long double delta0l, const long double alpha, const long double nmax)
+{
+
+	long double nu_p=(np + epsilon + l/2. + delta0l + alpha*std::pow(np - nmax, 2) / 2)*Dnu_p;
+	if (nu_p < 0.0)
+	{
+		std::cout << " WARNING: NEGATIVE FREQUENCIES DETECTED: IMPOSING POSITIVITY" << std::endl;
+		std::cout << " nu_p: " << nu_p << std::endl;
+		std::cout << " Cannot pursue " << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	return nu_p;
+}
+
+long double asympt_nu_g(const long double DPl, const int ng, const long double alpha)
+{
+	const long double Pl=(ng + alpha)*DPl;
+	return 1e6/Pl;
+}
+
 /*
 This the main function that solves the mixed mode asymptotic relation
 which is of the type p(nu) = g(nu)
@@ -381,6 +409,149 @@ void test_sg_solver_mm()
 }
 
 
+// This function uses solver_mm to find solutions from a spectrum
+// of pure p modes and pure g modes following the asymptotic relations at the second order for p modes and the first order for g modes
+Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long double epsilon, const int el, const long double delta0l, const long double alpha_p, 
+	const long double nmax, const long double DPl, const long double alpha, const long double q, const long double fmin, const long double fmax, 
+	const long double resol, bool returns_pg_freqs=true, bool verbose=false)
+{
+
+	const bool returns_axis=true;
+	const int Npmax=50;
+	const int Ngmax=1000;
+	const int Nmmax=Ngmax+Npmax;
+	const int Nmax_attempts=4;
+	const double tol=2*resol; // Tolerance while searching for double solutions of mixed modes
+
+	bool success;
+	int s0, i, attempts, np_min, np_max, ng_min, ng_max;
+	double nu_p, nu_g;
+	double fact=0.04;  // Default factor
+
+	VectorXi test;
+	VectorXd nu_p_all(Npmax), nu_g_all(Ngmax), nu_m_all(Nmmax), results(Nmmax);
+
+	Data_coresolver sols_iter;
+	Data_eigensols nu_sols;
+
+	// Use fmin and fmax to define the number of pure p modes and pure g modes to be considered
+	np_min=int(floor(fmin/Dnu_p - epsilon - el/2 - delta0l));
+	np_max=int(ceil(fmax/Dnu_p - epsilon - el/2 - delta0l));
+
+	np_min=int(floor(np_min - alpha*std::pow(np_min - nmax, 2) /2.));
+	np_max=int(ceil(np_max - alpha*std::pow(np_max - nmax, 2) /2.)); // CHECK THIS DUE TO - -
+
+	ng_min=int(floor(1e6/(fmax*DPl) - alpha));
+	ng_max=int(ceil(1e6/(fmin*DPl) - alpha));
+
+	if (np_min <= 0)
+	{
+		np_min=1;
+	}
+	if (fmin <= 150) // overrides of the default factor in case fmin is low
+	{
+		fact=0.01;
+	}
+	if (fmin <= 50)
+	{
+		fact=0.005;
+	}
+
+	//for np in range(np_min, np_max):
+	//	for ng in range(ng_min, ng_max):
+	s0=0;
+	for (int np=np_min; np<np_max; np++)
+	{
+		for (int ng=ng_min; ng<ng_max;ng++)
+		{
+			nu_p=asympt_nu_p(Dnu_p, np, epsilon, el, delta0l, alpha_p, nmax);
+			nu_g=asympt_nu_g(DPl, ng, alpha);
+			try
+			{
+				//nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DPl,  q, numin=nu_p - Dnu_p, numax=nu_p + Dnu_p, resol=resol, returns_axis=returns_axis, factor=fact);
+				sols_iter=solver_mm(nu_p, nu_g, Dnu_p, DPl, q, nu_p - Dnu_p, nu_p + Dnu_p, resol, returns_axis, verbose, fact);
+			}
+			catch (...){
+				success=false;
+				attempts=0;
+				try{
+					while (success ==false && attempts < Nmax_attempts){
+						try{
+							fact=fact/2;
+							sols_iter=solver_mm(nu_p, nu_g, Dnu_p, DPl, q, nu_p - Dnu_p, nu_p + Dnu_p, resol, returns_axis, verbose, fact);
+							success=true;
+						}
+						catch(...){
+							std::cout << " Problem with the fine grid when searching for a solution... attempting to reduce factor to " << fact << "..." << std::endl;
+						}
+					}
+				}
+				catch(...){
+						std::cout << "ValueError in solver_mm... Debug information:"<< std::endl;
+						std::cout << " We excedeed the number of attempts to refine the grid by reducing factor" << std::endl;
+						std::cout << " np_min = " << np_min << std::endl;
+						std::cout << " np_max = " << np_max << std::endl;
+						std::cout << " ng_min = " << ng_min << std::endl;
+						std::cout << " ng_max = " << ng_max << std::endl;
+						std::cout << " ---------- " << std::endl;			
+						std::cout << " Dnu_p = " << Dnu_p << std::endl;
+						std::cout << " np = " << np << std::endl;
+						std::cout << " epsilon= " << epsilon << std::endl;
+						std::cout << " delta0l= " << delta0l << std::endl;
+						std::cout << " alpha_p= " << alpha_p << std::endl;
+						std::cout << " nmax= " << nmax << std::endl;
+						std::cout << " ---------- " << std::endl;
+						std::cout << "   nu_p: " << nu_p << std::endl;
+						std::cout << "   nu_g: " << nu_g << std::endl;
+						std::cout << "   Dnu_p: " << Dnu_p << std::endl;
+						std::cout << "   DPl: " << DPl << std::endl;
+						std::cout << "   q: " << q << std::endl;
+						std::cout << "   numin=nu_p - Dnu_p: " << nu_p - Dnu_p << std::endl;
+						std::cout << "   numax=nu_p + Dnu_p: " << nu_p + Dnu_p << std::endl;
+						std::cout << "   resol: " << resol << std::endl;
+						std::cout << "   factor: " << fact << std::endl;
+						exit(EXIT_FAILURE);
+				}
+			}
+			if (verbose == true)
+			{
+				std::cout << "=========================================="  << std::endl;
+				std::cout << "nu_p: " << nu_p << std::endl;
+				std::cout << "nu_g: " << nu_g << std::endl;
+				std::cout << "solutions nu_m: " << sols_iter.nu_m << std::endl;
+			}
+			for (int s=0;s<sols_iter.nu_m.size();s++)
+			{
+				// Cleaning doubles: Assuming exact matches or within a tolerance range
+				test=where_dbl(nu_m_all, sols_iter.nu_m[s], tol);
+				//std::cout << sols_iter.nu_m[s] << std::endl;
+				if (test[0] == -1)
+				{
+					nu_m_all[s0]=sols_iter.nu_m[s];
+					nu_p_all[s0]=nu_p;
+					nu_g_all[s0]=nu_g;
+					s0=s0+1;
+				}
+			}
+		}
+	}
+	nu_m_all.conservativeResize(s0);	
+	nu_p_all.conservativeResize(s0);	
+	nu_g_all.conservativeResize(s0);	
+
+	if (returns_pg_freqs == true)
+	{
+		nu_sols.nu_m=nu_m_all;
+		nu_sols.nu_p=nu_p_all;
+		nu_sols.nu_g=nu_g_all;
+		return nu_sols;
+	} else
+	{
+		nu_sols.nu_m=nu_m_all;
+		return nu_sols;
+	}
+}
+
 // Function to test solver_mm()
 // This is a typical RGB case, with  density of g modes >> density of p modes
 void test_rgb_solver_mm()
@@ -408,10 +579,69 @@ void test_rgb_solver_mm()
 
 }
 
+
+/* Function to test solve_mm_asymptotic
+# The parameters are typical for a RGB in the g mode asymptotic regime
+# Default parameters are for an early SG... The asymptotic is not accurate then
+# consider: test_asymptotic(el=1, Dnu_p=30, beta_p=0.01, gamma0l=2., epsilon=0.4, DPl=110, alpha_g=0., q=0.15)
+# for a RGB
+*/
+void test_asymptotic(int el=1, long double Dnu_p=60, long double beta_p=0.0076, long double delta0l_percent=2., long double epsilon=0.4, 
+	long double DPl=400, long double alpha_g=0., long double q=0.15)
+{
+
+	// Define global Pulsation parameters
+	// Parameters for p modes that follow exactly the asymptotic relation of p modes
+	const long double D0=Dnu_p/100.;
+	const long double delta0l=-el*(el + 1) * delta0l_percent / 100.;
+
+	// Parameters for g modes that follow exactly the asymptotic relation of g modes for a star with radiative core
+	const long double alpha=0.;
+
+	// Define the frequency range for the calculation by (1) getting numax from Dnu and (2) fixing a range around numax
+	const long double beta0=0.263; // according to Stello+2009, we have Dnu_p ~ 0.263*numax^0.77 (https://arxiv.org/pdf/0909.5193.pdf)
+	const long double beta1=0.77; // according to Stello+2009, we have Dnu_p ~ 0.263*numax^0.77 (https://arxiv.org/pdf/0909.5193.pdf)
+	const long double nu_max=std::pow(10, log10(Dnu_p/beta0)/beta1);
+
+	const long double fmin=nu_max - 6*Dnu_p;
+	const long double fmax=nu_max + 4*Dnu_p;
+
+	const long double nmax=nu_max/Dnu_p - epsilon;
+	const long double alpha_p=beta_p/nmax;
+
+	// Fix the resolution to 4 years (converted into microHz)
+	const long double data_resol=1e6/(4.*365.*86400.);
+
+	Data_eigensols freqs;
+
+	//std::cout << "nmax= " << nmax << std::endl;
+
+	// Use the solver
+	freqs=solve_mm_asymptotic_O2p(Dnu_p, epsilon, el, delta0l, alpha_p, nmax, DPl, alpha_g, q, fmin, fmax, data_resol, true, false);
+
+	std::cout << " --- Lenghts ----"  << std::endl;
+	std::cout << " L(nu_g): " << freqs.nu_g.size()   << std::endl;
+	std::cout << " L(nu_p): " << freqs.nu_p.size()  << std::endl;
+	std::cout << " L(nu_m): " << freqs.nu_m.size()  << std::endl;
+
+	std::cout << " nu_m =" << freqs.nu_m << std::endl;
+}
+
+
 int main(void)
 {
-	std::cout << " Testing solver_mm() for the case of an SubGiant..." << std::endl;
-	test_sg_solver_mm();
-	std::cout << " Testing solver_mm() the case of a RedGiant..." << std::endl;
-	test_rgb_solver_mm();
+	//std::cout << " Testing solver_mm() for the case of an SubGiant..." << std::endl;
+	//test_sg_solver_mm();
+	//std::cout << " Testing solver_mm() the case of a RedGiant..." << std::endl;
+	//test_rgb_solver_mm();
+	std::cout << " Testing solve_mm_asymptotic_O2p() the case of a SubGiant..." << std::endl;
+	const int el=1;
+	const long double Dnu_p=10.;
+	long double beta_p=0.0076;
+	long double delta0l_percent=2;
+	long double epsilon=0.4;
+	long double DPl=70;
+	long double alpha_g=0.;
+	long double q=0.15;
+	test_asymptotic(el, Dnu_p, beta_p, delta0l_percent, epsilon, DPl, alpha_g, q);
 }

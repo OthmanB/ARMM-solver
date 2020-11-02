@@ -186,6 +186,80 @@ VectorXi where_in_range(VectorXd vec, double value_min, double value_max, bool s
 	return index_out;
 }
 
+VectorXi where_greater(VectorXd vec, double value_thld, bool strict){
+/*
+ * Gives the indexes of values of an array above a give a value. Test vec > value_thld
+ *
+*/
+   int cpt;
+   VectorXi index_out;
+  
+   std::vector<int> index;
+   index.resize(vec.size());
+	
+	cpt=0;
+	for(int i=0; i<vec.size(); i++){
+		if (strict == 1){
+			if(vec[i] > value_thld){
+				index[cpt]=i;
+				cpt=cpt+1;
+			}
+		} else{
+			if(vec[i] >= value_thld){
+				index[cpt]=i;
+				cpt=cpt+1;
+			}		
+		}		
+	}
+	if(cpt >=1){
+		index_out.resize(cpt);
+		for(int i=0; i<cpt; i++){
+			index_out[i]=index[i];
+		}
+	} else{
+		index_out.resize(1);
+		index_out[0]=-1;
+	}
+	return index_out;
+}
+
+VectorXi where_lower(VectorXd vec, double value_thld, bool strict){
+/*
+ * Gives the indexes of values of an array above a give a value. Test vec < value_thld
+ *
+*/
+   int cpt;
+   VectorXi index_out;
+  
+   std::vector<int> index;
+   index.resize(vec.size());
+	
+	cpt=0;
+	for(int i=0; i<vec.size(); i++){
+		if (strict == 1){
+			if(vec[i] < value_thld){
+				index[cpt]=i;
+				cpt=cpt+1;
+			}
+		} else{
+			if(vec[i] <= value_thld){
+				index[cpt]=i;
+				cpt=cpt+1;
+			}		
+		}		
+	}
+	if(cpt >=1){
+		index_out.resize(cpt);
+		for(int i=0; i<cpt; i++){
+			index_out[i]=index[i];
+		}
+	} else{
+		index_out.resize(1);
+		index_out[0]=-1;
+	}
+	return index_out;
+}
+
 std::vector<int> where_in_range(std::vector<double> vec, double value_min, double value_max, bool strict){
 /*
  * Gives the indexes of values of an array within a range.
@@ -220,6 +294,7 @@ std::vector<int> where_in_range(std::vector<double> vec, double value_min, doubl
 
 	return index;
 }
+
 
 VectorXi where_int(VectorXi vec, int value){
 /*
