@@ -333,11 +333,18 @@ def solve_mm_asymptotic_O2p(Dnu_p, epsilon, el, delta0l, alpha_p, nmax, DPl, alp
 	nu_m_all=[]
 	for np in range(np_min, np_max):
 		for ng in range(ng_min, ng_max):
-			#nu_p=asympt_nu_p(Dnu_p, np, epsilon, el, D0=D0)
+			print("np (", np_min, " / ", np_max, ")  :", np)
+			print("ng (", ng_min, " / ", ng_max, ")  :", ng)
+
 			nu_p=asympt_nu_p(Dnu_p, np, epsilon, el, delta0l=delta0l, alpha=alpha_p, nmax=nmax)
+			print(" passed nu_p")
 			nu_g=asympt_nu_g(DPl, ng, alpha)
 			nu_p_all.append(nu_p)
 			nu_g_all.append(nu_g)
+
+			print("nu_p=", nu_p)
+			print("nu_g=", nu_g)
+			print(" ---- ")
 			try:
 				nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DPl,  q, numin=nu_p - Dnu_p, numax=nu_p + Dnu_p, resol=resol, returns_axis=returns_axis, factor=fact)
 			except ValueError:

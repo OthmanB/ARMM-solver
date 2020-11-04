@@ -258,7 +258,9 @@ Returns a structure with:
 Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const long double Dnu_p, const long double DPl, const long double q, 
 	const long double numin, const long double numax, const long double resol, const bool returns_axis=false, const bool verbose=false, const long double factor=0.05)
 {
-	int i, Nsize=0;
+	//const int Nmmax=500; // Number of maximum mixed modes solutions that can be found 
+
+	int i, s_ok, Nsize=0;
 	long double range_min, range_max, nu_m_proposed, ratio,  ysol_pnu, ysol_gnu;
 	Data_coresolver results;
 	VectorXi idx;
@@ -276,7 +278,7 @@ Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const 
 	pnu=pnu_fct(nu, nu_p);
 	// Function g(nu) describing the g modes 
 	gnu=gnu_fct(nu, nu_g, Dnu_p, DPl, q);
-
+	
 	/* Find when p(nu) = g(nu) by looking for solution of p(nu) - g(nu) = 0
 	#     Method 1: Direct Interpolation... Works only for single solutions ==> Not used here
 	#int_fct = interpolate.interp1d(pnu - gnu, nu)
@@ -287,7 +289,8 @@ Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const 
 	#					by the resolution parameter resol, which in this case can be view
 	#					as the minimum precision.
 	*/
-	idx=sign_change(pnu-gnu);	
+	idx=sign_change(pnu-gnu);
+	//std::cout << "inside solver_mm: passed idx,   idx=" << idx << std::endl;	
 	/*
 	std::cout << " === C++ === " << std::endl;
 	std::cout << " nu_p =" << nu_p << std::endl;
@@ -298,9 +301,11 @@ Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const 
 	std::cout << "idx =" << idx << std::endl;
 	std::cout << "idx.size() = " << idx.size() << std::endl;
 	*/
+	s_ok=0;
+	nu_m.resize(idx.size());
 	for (long ind=0; ind<idx.size();ind++)
 	{
-		//std::cout << "idx[ind] =" << idx[ind] << std::endl;
+		//std::cout << "idx[" << ind << "] =" << idx[ind] << std::endl;
 		// Define a small local range around each of the best solutions
 		range_min=nu[idx[ind]] - 2*resol;
 		range_max=nu[idx[ind]] + 2*resol;
@@ -308,10 +313,6 @@ Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const 
 		nu_local=linspace(range_min, range_max, long((range_max-range_min)/(resol*factor)));
 		pnu_local=pnu_fct(nu_local, nu_p);
 		gnu_local=gnu_fct(nu_local, nu_g, Dnu_p, DPl, q);	
-
-		//std::cout << " len(nu_local)= " << nu_local.size() << std::endl;
-		//std::cout << " len(pnu_local)= " << pnu_local.size() << std::endl;
-		//std::cout << " len(gnu_local)= " << gnu_local.size() << std::endl;
 
 		// Perform the interpolation on the local range and append the solution to the nu_m list
 		nu_m_proposed=lin_interpol(pnu_local - gnu_local, nu_local, 0);
@@ -355,13 +356,23 @@ Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const 
 		// The way to keep real intersection is to verify after interpolation that we really
 		// have p(nu_m_proposed) = g(nu_m_proposed). We then only keeps solutions that satisfy
 		// a precision criteria of 0.1%.
-		if ((ratio >= 0.999) && (ratio <= 1.001))
+		/*if ((ratio >= 0.999) && (ratio <= 1.001))
 		{
+			std::cout << "   solver_mm : Adding solution only if it is really a solution" << std::endl;
 			Nsize=nu_m.size() +1;
 			nu_m.conservativeResize(Nsize);
 			nu_m[Nsize-1]=nu_m_proposed;
+			std::cout << "   solver_mm : Solution added" << std::endl;
+		}
+		*/
+		if ((ratio >= 0.999) && (ratio <= 1.001))
+		{
+			nu_m[s_ok]=nu_m_proposed;
+			s_ok=s_ok+1;
 		}
 	}
+	nu_m.conservativeResize(s_ok);
+
 	//ysol_gnu=gnu_fct(nu_m, nu_g, Dnu_p, DPl, q);
 	ysol_all=gnu_fct(nu_m, nu_g, Dnu_p, DPl, q);
 	
@@ -417,19 +428,18 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 {
 
 	const bool returns_axis=true;
-	const int Npmax=50;
-	const int Ngmax=1000;
-	const int Nmmax=Ngmax+Npmax;
+	const int Nmmax=5000; //Ngmax+Npmax;
 	const int Nmax_attempts=4;
 	const double tol=2*resol; // Tolerance while searching for double solutions of mixed modes
 
 	bool success;
-	int s0, i, attempts, np_min, np_max, ng_min, ng_max;
-	double nu_p, nu_g;
+	int s0m, i, attempts, np_min, np_max, ng_min, ng_max;
+	double nu_p, nu_g, Dnu_p_local, DPl_local; // Dnu_p_local and DPl_local are important if modes does not follow exactly the asymptotic relation.
 	double fact=0.04;  // Default factor
 
 	VectorXi test;
-	VectorXd nu_p_all(Npmax), nu_g_all(Ngmax), nu_m_all(Nmmax), results(Nmmax);
+	//VectorXd nu_p_all(Npmax), nu_g_all(Ngmax), nu_m_all(Nmmax), results(Nmmax);	
+	VectorXd nu_p_all(Nmmax), nu_g_all(Nmmax), nu_m_all(Nmmax), results(Nmmax);
 
 	Data_coresolver sols_iter;
 	Data_eigensols nu_sols;
@@ -457,19 +467,26 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 		fact=0.005;
 	}
 
-	//for np in range(np_min, np_max):
-	//	for ng in range(ng_min, ng_max):
-	s0=0;
+	//std::cout << " np_min = " << np_min << std::endl;
+	//std::cout << " np_max = " << np_max << std::endl;
+	//std::cout << " ng_min = " << ng_min << std::endl;
+	//std::cout << " ng_max = " << ng_max << std::endl;
+	//std::cout << "fmin=" << fmin << std::endl;
+	//std::cout << "fmax=" << fmax << std::endl;
+	s0m=0;
 	for (int np=np_min; np<np_max; np++)
 	{
 		for (int ng=ng_min; ng<ng_max;ng++)
 		{
 			nu_p=asympt_nu_p(Dnu_p, np, epsilon, el, delta0l, alpha_p, nmax);
 			nu_g=asympt_nu_g(DPl, ng, alpha);
+
+			// This is the local Dnu_p which differs from the average Dnu_p because of the curvature. The solver needs basically d(nu_p)/dnp , which is Dnu if O2 terms are 0.
+			Dnu_p_local=Dnu_p*(1. + alpha_p*(np - nmax)); 
+			DPl_local=DPl; // The solver needs here d(nu_g)/dng. Here we assume no core glitches so that it is the same as DPl. 
 			try
 			{
-				//nu_m, ysol, nu,pnu, gnu=solver_mm(nu_p, nu_g, Dnu_p, DPl,  q, numin=nu_p - Dnu_p, numax=nu_p + Dnu_p, resol=resol, returns_axis=returns_axis, factor=fact);
-				sols_iter=solver_mm(nu_p, nu_g, Dnu_p, DPl, q, nu_p - Dnu_p, nu_p + Dnu_p, resol, returns_axis, verbose, fact);
+				sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p/4, nu_p + 3.*Dnu_p/4, resol, returns_axis, verbose, fact);
 			}
 			catch (...){
 				success=false;
@@ -478,7 +495,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 					while (success ==false && attempts < Nmax_attempts){
 						try{
 							fact=fact/2;
-							sols_iter=solver_mm(nu_p, nu_g, Dnu_p, DPl, q, nu_p - Dnu_p, nu_p + Dnu_p, resol, returns_axis, verbose, fact);
+							sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p/4, nu_p + 3.*Dnu_p/4, resol, returns_axis, verbose, fact);
 							success=true;
 						}
 						catch(...){
@@ -524,20 +541,29 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 			{
 				// Cleaning doubles: Assuming exact matches or within a tolerance range
 				test=where_dbl(nu_m_all, sols_iter.nu_m[s], tol);
-				//std::cout << sols_iter.nu_m[s] << std::endl;
 				if (test[0] == -1)
 				{
-					nu_m_all[s0]=sols_iter.nu_m[s];
-					nu_p_all[s0]=nu_p;
-					nu_g_all[s0]=nu_g;
-					s0=s0+1;
+					/*std::cout << " adding a solution" << std::endl;
+					std::cout << "    nu_m_all.size()= " << nu_m_all.size() << std::endl;
+					std::cout << "    nu_p_all.size()= " << nu_p_all.size() << std::endl;
+					std::cout << "    nu_g_all.size()= " << nu_g_all.size() << std::endl;
+					std::cout << "    s0m               =" << s0m << std::endl;
+					std::cout << "    s                =" << s << std::endl;
+					std::cout << "    sols_iter.nu_m[s]=" << sols_iter.nu_m[s] << std::endl;
+					std::cout << "    nu_p             =" << nu_p << std::endl;
+					std::cout << "    nu_g             =" << nu_g << std::endl;
+					*/
+					nu_m_all[s0m]=sols_iter.nu_m[s];
+					nu_p_all[s0m]=nu_p;
+					nu_g_all[s0m]=nu_g;
+					s0m=s0m+1;
 				}
 			}
 		}
 	}
-	nu_m_all.conservativeResize(s0);	
-	nu_p_all.conservativeResize(s0);	
-	nu_g_all.conservativeResize(s0);	
+	nu_m_all.conservativeResize(s0m);	
+	nu_p_all.conservativeResize(s0m);	
+	nu_g_all.conservativeResize(s0m);	
 
 	if (returns_pg_freqs == true)
 	{
@@ -586,9 +612,38 @@ void test_rgb_solver_mm()
 # consider: test_asymptotic(el=1, Dnu_p=30, beta_p=0.01, gamma0l=2., epsilon=0.4, DPl=110, alpha_g=0., q=0.15)
 # for a RGB
 */
-void test_asymptotic(int el=1, long double Dnu_p=60, long double beta_p=0.0076, long double delta0l_percent=2., long double epsilon=0.4, 
-	long double DPl=400, long double alpha_g=0., long double q=0.15)
+void test_asymptotic()
 {
+
+	// --------------------------------------------------
+	// ---- Content to be modified for testing a RGB ----
+	// --------------------------------------------------
+	
+	const int el=1;
+	const long double Dnu_p=10.;
+	const long double beta_p=0.076;
+	const long double delta0l_percent=2;
+	const long double epsilon=0.4;
+	const long double DPl=70;
+	const long double alpha_g=0.;
+	const long double q=0.15;
+	
+	// --------------------------------------------
+
+	// --------------------------------------------------
+	// ---- Content to be modified for testing a SG ----
+	// --------------------------------------------------
+	/*
+	const int el=1;
+	const long double Dnu_p=60.;
+	const long double beta_p=0.0076;
+	const long double delta0l_percent=2;
+	const long double epsilon=0.4;
+	const long double DPl=400;
+	const long double alpha_g=0.;
+	const long double q=0.15;
+	*/
+	// --------------------------------------------
 
 	// Define global Pulsation parameters
 	// Parameters for p modes that follow exactly the asymptotic relation of p modes
@@ -620,8 +675,6 @@ void test_asymptotic(int el=1, long double Dnu_p=60, long double beta_p=0.0076, 
 	freqs=solve_mm_asymptotic_O2p(Dnu_p, epsilon, el, delta0l, alpha_p, nmax, DPl, alpha_g, q, fmin, fmax, data_resol, true, false);
 
 	std::cout << " --- Lenghts ----"  << std::endl;
-	std::cout << " L(nu_g): " << freqs.nu_g.size()   << std::endl;
-	std::cout << " L(nu_p): " << freqs.nu_p.size()  << std::endl;
 	std::cout << " L(nu_m): " << freqs.nu_m.size()  << std::endl;
 
 	std::cout << " nu_m =" << freqs.nu_m << std::endl;
@@ -635,13 +688,5 @@ int main(void)
 	//std::cout << " Testing solver_mm() the case of a RedGiant..." << std::endl;
 	//test_rgb_solver_mm();
 	std::cout << " Testing solve_mm_asymptotic_O2p() the case of a SubGiant..." << std::endl;
-	const int el=1;
-	const long double Dnu_p=10.;
-	long double beta_p=0.0076;
-	long double delta0l_percent=2;
-	long double epsilon=0.4;
-	long double DPl=70;
-	long double alpha_g=0.;
-	long double q=0.15;
-	test_asymptotic(el, Dnu_p, beta_p, delta0l_percent, epsilon, DPl, alpha_g, q);
+	test_asymptotic();
 }
