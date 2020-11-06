@@ -1,3 +1,8 @@
+### 0.3alpha [80%]
+	Implementation of all relevant function from bump_DP.py into bump_DP.cpp
+	Testing all the functions internally in the c++ and check the behavior of of the master code creating values
+	Testing comparatively with python code the master functions... BEWARE THAT SMALL BUGS WERE FOUND THAT MAY CHANGE THE RESULTS
+	
 ### 0.2alpha [100%]
 	Implementation of solve_mm_asymptotic_O2p() [100%]
 	Implementation of a testing function for solve_mm_asymptotic_O2p() [100%]
