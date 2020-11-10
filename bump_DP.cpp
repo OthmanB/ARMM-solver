@@ -377,7 +377,7 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-	std::uniform_real_distribution<double> distrib(xmin,xmax);
+	//std::uniform_real_distribution<double> distrib(xmin,xmax);
 	std::uniform_real_distribution<double> distrib(0 , 1);
 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -385,10 +385,10 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star)
 	std::normal_distribution<double> distrib_m(0.,cfg_star.sigma_m);
 
 
-	int el;
-	long double tmp, c, xmin ,xmax, delta0l_star;
+	int en, el, np_min, np_max;
+	long double tmp, resol, c, xmin ,xmax, delta0l_star;
 
-	VectorXd tmpXd, noise_params_harvey1985(4), Noise_l0, nu_m_l1, height_l1, height_l1p, width_l1; // Simulate a single harvey profile
+	VectorXd tmpXd, noise_params_harvey1985(4), Noise_l0, nu_l0, nu_m_l1, nu_l2, nu_l3, height_l1, height_l1p, width_l1; // Simulate a single harvey profile
 
 	Data_2vectXd width_height_l0;
 	Data_rot2zone rot2data;
@@ -403,7 +403,7 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star)
 	noise_params_harvey1985[1]= noise_params_harvey1985[1]/1000.;
 
 	noise_params_harvey1985[2]=cfg_star.noise_params_harvey_like[6];
-	noise_params_harvey1985[3]=noise_params[7];
+	noise_params_harvey1985[3]=cfg_star.noise_params_harvey_like[7];
 
 	// Fix the resolution to 4 years (converted into microHz)
 	resol=1e6/(4*365.*86400.);
@@ -416,23 +416,23 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star)
 	np_min=int(floor(cfg_star.fmin/cfg_star.Dnu_star - cfg_star.epsilon_star));
 	np_max=int(ceil(cfg_star.fmax/cfg_star.Dnu_star - cfg_star.epsilon_star));
 
-	np_min=int(floor(np_min - cfg_star.alpha_p_star*std::pow(np_min - nmax, 2) /2.));
-	np_max=int(ceil(np_max - cfg_star.alpha_p_star*std::pow(np_max - nmax, 2) /2.)); 
+	np_min=int(floor(np_min - cfg_star.alpha_p_star*std::pow(np_min - cfg_star.nmax_star, 2) /2.));
+	np_max=int(ceil(np_max - cfg_star.alpha_p_star*std::pow(np_max - cfg_star.nmax_star, 2) /2.)); 
 
-	if (nmin < 1){
-		nmin=1;
+	if (np_min < 1){
+		np_min=1;
 	}
 	for (en=np_min; en<np_max; en++){
 		tmp=asympt_nu_p(cfg_star.Dnu_star, en, cfg_star.epsilon_star, 0, 0, cfg_star.alpha_p_star, cfg_star.alpha_p_star);
 		nu_l0[en-np_min]=tmp;
 	}
 	
-	std::cout << "cfg_star.Dnu_star=", cfg_star.Dnu_star << std::endl;
-	std::cout << "cfg_star.epsilon_star=", cfg_star.epsilon_star << std::endl;
-	std::cout << "cfg_star.alpha_p_star=", cfg_star.alpha_p_star << std::endl;
-	std::cout << "cfg_star.alpha_p_star=", cfg_star.alpha_p_star << std::endl;
-	std::cout << "cfg_star.numax_star=", cfg_star.numax_star << std::endl;
-	std::cout << "nu_l0=", nu_l0 << std::endl;
+	std::cout << "cfg_star.Dnu_star=" << cfg_star.Dnu_star << std::endl;
+	std::cout << "cfg_star.epsilon_star=" << cfg_star.epsilon_star << std::endl;
+	std::cout << "cfg_star.alpha_p_star=" << cfg_star.alpha_p_star << std::endl;
+	std::cout << "cfg_star.alpha_p_star=" << cfg_star.alpha_p_star << std::endl;
+	std::cout << "cfg_star.numax_star=" << cfg_star.numax_star << std::endl;
+	std::cout << "nu_l0=" <<  nu_l0 << std::endl;
 
 	width_height_l0=width_height_load_rescale(nu_l0, cfg_star.Dnu_star, cfg_star.numax_star, cfg_star.filetemplate); // Function that ensure that Hmax and Wplateau is at numax
 	
@@ -536,11 +536,11 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star)
 	// ------- l=2 modes -----
 	el=2;
 	delta0l_star=-el*(el + 1) * cfg_star.delta0l_percent_star / 100.;
-	nu_l2.resize(nmax-nmin);
-	for (int en=nmin; en<nmax;en++)
+	nu_l2.resize(cfg_star.nmax_star-np_min);
+	for (int en=np_min; en<ncfg_star.max_star;en++)
 	{
 		tmp=asympt_nu_p(cfg_star.Dnu_star, en, cfg_star.epsilon_star, el, delta0l_star, cfg_star.alpha_p_star, ncfg_star.alpha_p_star);
-		nu_l2[en-nmin]=tmp;
+		nu_l2[en-np_min]=tmp;
 	}
 
 	// Filter solutions that endup at frequencies higher/lower than the nu_l0 because we will need to extrapolate height/widths otherwise...
@@ -565,11 +565,11 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star)
 	// ------ l=3 modes ----
 	el=3;
 	delta0l_star=-el*(el + 1) * cfg_star.delta0l_percent_star / 100.;
-	nu_l3.resize(nmax-nmin);
-	for (int en=nmin; en<nmax;en++)
+	nu_l3.resize(cfg_star.nmax_star-np_min);
+	for (int en=np_min; en<cfg_star.nmax_star;en++)
 	{
 		tmp=asympt_nu_p(cfg_star.Dnu_star, en, cfg_star.epsilon_star, el, delta0l_star, cfg_star.alpha_p_star, ncfg_star.alpha_p_star);
-		nu_l3[en-nmin]=tmp;
+		nu_l3[en-np_min]=tmp;
 	}
 	
 	posOK=where_in_range(nu_l3, min(nu_l0), max(nu_l0), false);
