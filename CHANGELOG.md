@@ -1,4 +1,4 @@
-### 0.3alpha [80%]
+### 0.3alpha [95%]
 	Implementation of all relevant function from bump_DP.py into bump_DP.cpp
 	Testing all the functions internally in the c++ and check the behavior of of the master code creating values
 	Testing comparatively with python code the master functions... BEWARE THAT SMALL BUGS WERE FOUND THAT MAY CHANGE THE RESULTS

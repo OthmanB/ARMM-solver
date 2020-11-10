@@ -74,7 +74,7 @@ def ksi_fct1(nu, nu_p, nu_g, Dnu_p, DPl, q):
 #				   of ksi_pg. Allows a much a higher precision, but will be slower
 #				   This could be usefull as in case of low ng, the norm is badly estimated in
 #				   'fast' mode. Then we need to use a more continuous function to evaluate the norm
-def ksi_fct2(nu, nu_p, nu_g, Dnu_p, DPl, q, norm_method='fast'):
+def ksi_fct2(nu, nu_p, nu_g, Dnu_p, DPl, q, norm_method="fast"):
 	Lp=len(nu_p)
 	Lg=len(nu_g)
 

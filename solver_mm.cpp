@@ -15,6 +15,7 @@
 #	 nu_p(nu), nu_g(nu), Dnu_p(nu) and DPl(nu) (meaning handling glitches)
 */
 // ------------------
+#pragma once
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
@@ -33,6 +34,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXi;
 using Eigen::VectorXd;
 
+/*
 // Taken from https://stackoverflow.com/questions/27028226/python-linspace-in-c
 template<typename T>
 std::vector<double> linspace(T start_in, T end_in, int num_in)
@@ -62,6 +64,7 @@ std::vector<double> linspace(T start_in, T end_in, int num_in)
   return linspaced;
 }
 // -----
+*/
 
 // My linspace function
 VectorXd linspace(const long double start_in, const long double end_in, const long num_in)
@@ -822,6 +825,7 @@ void test_asymptotic_sg()
 	std::cout << " nu_m =" << freqs.nu_m << std::endl;
 }
 
+/*
 int main(void)
 {
 	//std::cout << " Testing solver_mm() for the case of an SubGiant..." << std::endl;
@@ -833,3 +837,4 @@ int main(void)
 	std::cout << " Testing solve_mm_asymptotic_O2p() the case of a SugGiant..." << std::endl;
 	test_asymptotic_sg();
 }
+*/

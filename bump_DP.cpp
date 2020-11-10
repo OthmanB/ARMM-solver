@@ -16,13 +16,13 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-
+#include <fstream>
 #include "version_solver.h"
 #include "data.h"
 #include "string_handler.h"
 #include "interpol.h"
 #include "noise_models.h" // get the harvey_1985 function
-
+#include "solver_mm.h"
 
 /*
 # the ksi function as defined in equation 14 of Mosser+2017 (https://arxiv.org/pdf/1509.06193.pdf)
@@ -34,45 +34,50 @@
 #   DPl: Period Spacing (seconds)
 #	q : Coupling term (no unit)
 */
-VectorXd ksi_fct1(const VectorXd nu, const long double nu_p, const long double nu_g, const long double Dnu_p, const long double DPl, const long double q):
+VectorXd ksi_fct1(const VectorXd nu, const long double nu_p, const long double nu_g, const long double Dnu_p, const long double DPl, const long double q)
+{
 	
 	const long double pi = 3.141592653589793238L;
-	VectorXd cos_upterm, cos_downterm, front_term, tmp(nu.size());
+	VectorXd cos_upterm, cos_downterm, front_term, tmp(nu.size()), tmp2(nu.size()), ksi(nu.size());
 
 	tmp.setConstant(1./nu_g);
-	cos_upterm=pi * 1e6 * (1./nu.cwiseInverse() - tmp)/DPl;
+	cos_upterm=pi * 1e6 * (nu.cwiseInverse() - tmp)/DPl;
 
 	tmp.setConstant(nu_p);
-	cos_downterm=pi * (nu - nu_p) /Dnu_p;
+	cos_downterm=pi * (nu - tmp) /Dnu_p;
 	front_term= 1e-6 * nu.array().square() * DPl / (q * Dnu_p); // relation accounting for units in Hz and in seconds
 
-	ksi=1./(1. + front_term * cos_upterm.array().cos().square()/cos_downterm.array().cos().square());
-	
-	return ksi;
+	//ksi=1./(1. + front_term * cos_upterm.array().cos().square()/cos_downterm.array().cos().square());
+	tmp2=cos_upterm.array().cos().square()/cos_downterm.array().cos().square();
 
+	tmp.setConstant(1);
+	ksi=front_term.cwiseProduct(tmp2);
+	ksi=(tmp + ksi).cwiseInverse();
+	return ksi;
+}
 
 /*
 # Variant of ksi_fct that deals with arrays for nu_p, nu_g, Dnu_p, DPl
 # This requires that nu_p and Dnu_p have the same dimension
 # Also nu_g and DPl must have the same dimension
 # Additional parameter:
-#  - norm-method: When set to 'fast', normalise by the max of the ksi_pg calculated at the
+#  - norm-method: When set to "fast", normalise by the max of the ksi_pg calculated at the
 #				   Frequencies nu given by the user
 #				   When set to 'exact', normalise by the max of a heavily interpolated function
 #				   of ksi_pg. Allows a much a higher precision, but will be slower
 #				   This could be usefull as in case of low ng, the norm is badly estimated in
-#				   'fast' mode. Then we need to use a more continuous function to evaluate the norm
+#				   "fast" mode. Then we need to use a more continuous function to evaluate the norm
 */
-VectorXd ksi_fct2(const VectorXd nu, const VectorXd nu_p, const VectorXd nu_g, const VectorXd Dnu_p, const VectorXd DPl, const long double q, const std::string norm_method='fast')
+VectorXd ksi_fct2(const VectorXd nu, const VectorXd nu_p, const VectorXd nu_g, const VectorXd Dnu_p, const VectorXd DPl, const long double q, const std::string norm_method="fast")
 {
 	const int Lp=nu_p.size();
 	const int Lg=nu_g.size();
 	const long double resol=1e6/(4*365.*86400.); // Fix the grid resolution to 4 years (converted into microHz)
 
-	VectorXd ksi_pg(nu.size()), nu4norm;
+	VectorXd ksi_tmp, ksi_pg(nu.size()), nu4norm, ksi4norm;
 
 	int Ndata;
-	long double norm_coef;
+	long double norm_coef, fmin,fmax;
 
 	ksi_pg.setConstant(nu.size());
 	for (int np=0; np<Lp;np++)
@@ -83,39 +88,41 @@ VectorXd ksi_fct2(const VectorXd nu, const VectorXd nu_p, const VectorXd nu_g, c
 			ksi_pg=ksi_pg + ksi_tmp;
 		}
 	}
-	if (norm_method == 'fast'){
-		norm_coef=max(ksi_pg);
+	if (norm_method == "fast"){
+		norm_coef=ksi_pg.maxCoeff();
 	}
 	else{ // We build a very resolved 'continuous function of the frequency to calculate the norm'
-		if (min(nu_p) >= min(nu_g)){
-			fmin=min(nu_g);
+		if (nu_p.minCoeff() >= nu_g.minCoeff()){
+			fmin=nu_g.minCoeff();
 		} else{
-			fmin=min(nu_g);
+			fmin=nu_p.minCoeff();
 		}
-		if (max(nu_p) >= max(nu_g)){
-			fmin=max(nu_p);
+		if (nu_p.maxCoeff() >= nu_g.maxCoeff()){
+			fmin=nu_p.maxCoeff();
 		} else{
-			fmin=max(nu_g);
+			fmin=nu_g.maxCoeff();
 		}
 		Ndata=int((fmax-fmin)/resol);
 		nu4norm=linspace(fmin, fmax, Ndata);
-		ksi4norm.resize(nu4norm);
-		for np in range(Lp):
-			for ng in range(Lg):
+		ksi4norm.resize(nu4norm.size());
+		for (int np=0; np<Lp; np++){
+			for (int ng=0; ng<Lg; ng++){
 				ksi_tmp=ksi_fct1(nu4norm, nu_p[np], nu_g[ng], Dnu_p[np], DPl[ng], q);
 				ksi4norm=ksi4norm + ksi_tmp;
-		norm_coef=max(ksi4norm);
+			}
+		}
+		norm_coef=ksi4norm.maxCoeff();
 	}
 	ksi_pg=ksi_pg/norm_coef;	
 	return ksi_pg;
 }
 
-VectorXd gamma_l_fct2(const VectorXd ksi_pg, const VectorXd nu_m, const VectorXd nu_p_l0, const VectorXd width_l0, const long double hl_h0_ratio, const int el)
+VectorXd gamma_l_fct2(const VectorXd ksi_pg, const VectorXd nu_m, const VectorXd nu_p_l0, const VectorXd width_l0, const VectorXd hl_h0_ratio, const int el)
 {
 	long double width0_at_l;
 	VectorXd width_l(ksi_pg.size());
 
-	if (  (nu_p0.size() != width0.size()) || (ksi_pg.size() != nu_m.size()) )
+	if (  (nu_p_l0.size() != width_l0.size()) || (ksi_pg.size() != nu_m.size()) )
 	{
 		std::cout << "Inconsistency between the size of the Width and l=0 frequency array or between ksi_pg and nu_m arrays" << std::endl;
 		std::cout << "Cannot pursue. The program will exit now" << std::endl;
@@ -126,7 +133,7 @@ VectorXd gamma_l_fct2(const VectorXd ksi_pg, const VectorXd nu_m, const VectorXd
 		for (int i=0; i<ksi_pg.size(); i++)
 		{
 			width0_at_l=lin_interpol(nu_p_l0, width_l0, nu_m[i]);
-			width_l[i]=width0_at_l * (1. - ksi_pg[i])/ std::sqrt(hl_h0_ratio);
+			width_l[i]=width0_at_l * (1. - ksi_pg[i])/ std::sqrt(hl_h0_ratio[i]);
 		}
 		// ---- DEBUG LINES ----
 		std::cout << "   DEBUG FOR gamma_l_fct2..." << std::endl;
@@ -143,8 +150,11 @@ VectorXd h_l_rgb(const VectorXd ksi_pg)
 {
 	const double tol=1e-5;
 	VectorXi pos;
+	VectorXd tmp(ksi_pg.size()), hl_h0;
 
-	hl_h0=sqrt(1. - ksi_pg);
+	tmp.setConstant(1);
+	hl_h0=tmp - ksi_pg;
+	hl_h0=hl_h0.array().sqrt();
 	pos=where_dbl(hl_h0, 0, tol);
 	for (int i=0;i<pos.size();i++)
 	{
@@ -160,15 +170,18 @@ VectorXd h_l_rgb(const VectorXd ksi_pg)
 }
 
 // Put here the code for reading template files that contain heights and width profiles
-void read_templatefile(const std::string file){
+template_file read_templatefile(const std::string file){
 
+	template_file template_data;
+
+	return template_data;
 }
 
 Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double Dnu_star, const long double numax_star, const std::string file)
 {
 	int Nref, Nstar;
-	long double epsilon_star, n_at_numax_star, w_tmp, h_tmp;
-	VectorXd tmp, tmp_ref, nu_ref, en_list_ref, en_list_star, w_star, h_star;
+	long double n_at_numax_ref, height_ref_at_numax, gamma_ref_at_numax, epsilon_star, n_at_numax_star, w_tmp, h_tmp;
+	VectorXd tmp, tmp_ref, nu_ref, height_ref, gamma_ref, en_list_ref, en_list_star, w_star, h_star;
 	Data_2vectXd out;
 
 	template_file template_data;
@@ -178,19 +191,24 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 	height_ref=template_data.data_ref.col(1);//[:,1]
 	gamma_ref=template_data.data_ref.col(2);//[:,2]
 
-	height_ref_at_numax=lin_interpol(nu_ref, height_ref, numax_ref);
-	gamma_ref_at_numax=lin_interpol(nu_ref, gamma_ref, numax_ref);
-	n_at_numax_ref=numax_ref/Dnu_ref - epsilon_ref;
+	height_ref_at_numax=lin_interpol(nu_ref, height_ref, template_data.numax_ref);
+	gamma_ref_at_numax=lin_interpol(nu_ref, gamma_ref, template_data.numax_ref);
+	n_at_numax_ref=template_data.numax_ref/template_data.Dnu_ref - template_data.epsilon_ref;
 	
 	Nref=nu_ref.size();
 	tmp.resize(Nref);
 	en_list_ref.resize(Nref);
 
-	tmp.setConstant(epsilon_ref);
-	en_list_ref=nu_ref/Dnu_ref - tmp; // This list will be monotonic
+	tmp.setConstant(template_data.epsilon_ref);
+	en_list_ref=nu_ref/template_data.Dnu_ref - tmp; // This list will be monotonic
 	// ------------------------------------------------------------------------------------
 	// Rescaling using the base frequencies given above for the Sun
-	epsilon_star=mean(nu_star/Dnu_star % 1);
+	epsilon_star=0;
+	for (int i=0; i< nu_star.size(); i++){
+		epsilon_star=epsilon_star+( std::fmod(nu_star[i]/Dnu_star, 1));
+	}
+	epsilon_star=epsilon_star/nu_star.size();
+
 	n_at_numax_star=numax_star/Dnu_star - epsilon_star;
 	
 	Nstar=nu_star.size();
@@ -200,8 +218,8 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 	tmp.setConstant(epsilon_star);
 	en_list_star=nu_star/Dnu_star - tmp;
 
-	tmp.resize(n_at_numax_ref.size());
-	tmp.setConstant(n_at_numax_ref);
+	tmp.resize(en_list_star.size());
+	tmp.setConstant(en_list_star.size());
 	tmp_ref=en_list_ref - tmp;
 	for (int en=0; en<en_list_star.size(); en++){
 		w_tmp=lin_interpol(tmp_ref, gamma_ref/gamma_ref_at_numax, en_list_star[en] - n_at_numax_star);
@@ -209,10 +227,10 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 		w_star[en]=w_tmp;
 		h_star[en]=h_tmp;
 	}
-	h_star=h_star/max(h_star); // Normalise so that that HNR(numax)=1 if white noise N0=1
+	h_star=h_star/h_star.maxCoeff(); // Normalise so that that HNR(numax)=1 if white noise N0=1
 
-	out.vectXd1=w_star;
-	out.vectXd2=h_star;
+	out.vecXd1=w_star;
+	out.vecXd2=h_star;
 	return out;
 }
 
@@ -221,7 +239,7 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 // distribution of rotation in the envelope and a uniform population of core-to-envelope ratios 
 // 	 (1) rot_envelope: average rotation in the envelope
 //	 (2) core2envelope_star: average rotation in the core 
-Data_rot2zone rot_2zones_v2(const long double rot_envelope, const long doulbe core2envelope_star, const std::string output_file_rot="")
+Data_rot2zone rot_2zones_v2(const long double rot_envelope, const long double core2envelope_star, std::string output_file_rot=" ")
 {
 
 	Data_rot2zone rot2data;
@@ -230,7 +248,7 @@ Data_rot2zone rot_2zones_v2(const long double rot_envelope, const long doulbe co
 	const long double rot_core=core2envelope_star * rot_envelope;
 	//std::ostringstream strg;
 	std::ofstream outfile;
-	if (output_file_rot != "")
+	if (output_file_rot != " ")
 	{
 		outfile.open(output_file_rot.c_str());
 		if (outfile.is_open()){
@@ -251,21 +269,25 @@ Data_rot2zone rot_2zones_v2(const long double rot_envelope, const long doulbe co
 // distribution of rotation in the envelope and a uniform population of core rotation
 // 	 (1) rot_envelope: average rotation in the envelope
 //	 (2) rot_core: average rotation in the core 
-Data_rot2zone rot_2zones_v3(const long double rot_envelope, const long double rot_core, const std::string output_file_rot=""):
-	
+Data_rot2zone rot_2zones_v3(const long double rot_envelope, const long double rot_core, std::string output_file_rot=" ")
+{
+	Data_rot2zone rot2data;
 	std::ofstream outfile;
-	if (output_file_rot != "")
+
+	if (output_file_rot != " ")
 	{
 		outfile.open(output_file_rot.c_str());
 		if (outfile.is_open()){
-		outfile << "#Average envelope rotation (microHz) /  Average core rotation  (microHz)\n";
-		outfile << rot_envelope <<  "  " << rot_core;
-		outfile.close();
-
+			outfile << "#Average envelope rotation (microHz) /  Average core rotation  (microHz)\n";
+			outfile << rot_envelope <<  "  " << rot_core;
+			outfile.close();
+		}
+	}
 	rot2data.rot_env=rot_envelope;
 	rot2data.rot_core=rot_core;
 
 	return rot2data;
+}
 
 // Function that determine the rotation in the envelope, here approximated to be the surface rotation.
 // Inspired by the surface rotation from Ceillier et al. 2017 (https://arxiv.org/pdf/1707.05989.pdf), Fig. 5
@@ -274,7 +296,7 @@ Data_rot2zone rot_2zones_v3(const long double rot_envelope, const long double ro
 // The truncation happens at sigma. Values are given in days
 // Returns: 
 //	rot_s: rotation frequency in microHz
-long double rot_envelope(const long double med=60., const long double sigma=3.)
+long double rot_envelope(long double med=60., long double sigma=3.)
 {
 	const long double var=30./sigma; // in days
 	
@@ -350,8 +372,9 @@ VectorXd dnu_rot_2zones(const VectorXd ksi_pg, const long double rot_envelope, c
 #	width_lx: Widths of the l=x modes. x is between 0 and 3
 #   height_lx: Heights of the l=x modes. x is between 0 and 3 
 */
-void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star):
 
+void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star)
+{
 	std::random_device rd;
 	std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
 	std::uniform_real_distribution<double> distrib(xmin,xmax);
@@ -369,7 +392,8 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star):
 
 	Data_2vectXd width_height_l0;
 	Data_rot2zone rot2data;
-	
+	Params_synthetic_star params_out;
+
 	//Defining what should be Hmax_l0 in order to get the desired HNR
 	//                   0           1         2           3            4           5          6       7
 	//noise_params_harvey_like=[A_Pgran ,  B_Pgran , C_Pgran   ,  A_taugran ,  B_taugran  , C_taugran    , p      N0] // 
@@ -566,7 +590,38 @@ void make_synthetic_asymptotic_star(const Cfg_synthetic_star cfg_star):
 	a1_l3.resize(nu_l3.size());
 	a1_l3.setConstant(rot_env);//=numpy.repeat(rot_env, len(nu_l3))
 
-	// CONTINUE HERE
-	
-	return nu_l0, nu_p_l1, nu_g_l1, nu_m_l1, nu_l2, nu_l3, width_l0, width_l1, width_l2, width_l3, height_l0, height_l1, height_l2, height_l3, a1_l1, a1_l2, a1_l3
+	params_out.nu_l0=nu_l0;
+	params_out.nu_p_l1=nu_p_l1;
+	params_out.nu_g_l1=nu_g_l1;
+	params_out.nu_m_l1=nu_m_l1;
+	params_out.nu_l2=nu_l2;
+	params_out.nu_l3=nu_l3;
+	params_out.width_l0=width_l0;
+	params_out.width_l1=width_l1;
+	params_out.width_l2=width_l2;
+	params_out.width_l3=width_l3;
+	params_out.height_l0=height_l0;
+	params_out.height_l1=height_l1;
+	params_out.height_l2=height_l2;
+	params_out.height_l3=height_l3;
+	params_out.a1_l1=a1_l1;
+	params_out.a1_l2=a1_l2;
+	params_out.a1_l3=a1_l3;
+		
+	return params_synthetic_star;
+}
 
+
+int main(void){
+	const Cfg_synthetic_star cfg_star;
+	make_synthetic_asymptotic_star(cfg_star);
+}
+/*int main(void){
+
+	VectorXd ksi_pg, r;
+	long double rot_envelope=1;
+	long double rot_core=1;
+	r=dnu_rot_2zones(ksi_pg, rot_envelope, rot_core);
+
+}
+*/

@@ -140,13 +140,13 @@ struct Data_2vectXd{
 };
 
 // For simulations only, we use a template to derive height and widths of modes
-struc template_file{
+struct template_file{
 	std::string ID_ref;
 	double numax_ref;
 	double Dnu_ref; 
 	double epsilon_ref;
 	MatrixXd data_ref;
-}
+};
 
 // ----------------------------------------
 // ----- For mixed modes calculation ------
@@ -167,7 +167,7 @@ struct Data_rot2zone{
 	long double rot_core, rot_env;
 };
 
-struc Cfg_synthetic_star{
+struct Cfg_synthetic_star{
 	long double Teff_star; 
 	long double numax_star;
 	long double Dnu_star;
@@ -192,4 +192,24 @@ struc Cfg_synthetic_star{
 	std::string filetemplate;
 	long double sigma_p;
 	long double sigma_m;
+};
+
+struct Params_synthetic_star{
+	VectorXd nu_l0;
+	VectorXd nu_p_l1;
+	VectorXd nu_g_l1; 
+	VectorXd nu_m_l1;
+	VectorXd nu_l2;
+	VectorXd nu_l3;
+	VectorXd width_l0;
+	VectorXd width_l1;
+	VectorXd width_l2; 
+	VectorXd width_l3;
+	VectorXd height_l0;
+	VectorXd height_l1;
+	VectorXd height_l2;
+	VectorXd height_l3;
+	VectorXd a1_l1;
+	VectorXd a1_l2; 
+	VectorXd a1_l3;
 };
