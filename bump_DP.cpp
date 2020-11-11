@@ -273,10 +273,14 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 	template_file template_data;
 
 	template_data= read_templatefile(file);
+
+	std::cout << "after reading templatefile" << std::endl;
 	nu_ref=template_data.data_ref.col(0); //[:,0] // CHECKS NEEDED REALLY COL OR IS IT ROW?
 	height_ref=template_data.data_ref.col(1);//[:,1]
 	gamma_ref=template_data.data_ref.col(2);//[:,2]
 
+	std::cout << "after getting nu_ref height_ref, and gamma_ref" << std::endl;
+	
 	height_ref_at_numax=lin_interpol(nu_ref, height_ref, template_data.numax_ref);
 	gamma_ref_at_numax=lin_interpol(nu_ref, gamma_ref, template_data.numax_ref);
 	n_at_numax_ref=template_data.numax_ref/template_data.Dnu_ref - template_data.epsilon_ref;
@@ -291,9 +295,10 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 	// Rescaling using the base frequencies given above for the Sun
 	epsilon_star=0;
 	for (int i=0; i< nu_star.size(); i++){
-		epsilon_star=epsilon_star+( std::fmod(nu_star[i]/Dnu_star, 1));
+		epsilon_star=epsilon_star + ( std::fmod(nu_star[i]/Dnu_star, 1));
 	}
 	epsilon_star=epsilon_star/nu_star.size();
+	std::cout << "After epsilon_star" << std::endl;
 
 	n_at_numax_star=numax_star/Dnu_star - epsilon_star;
 	
@@ -304,10 +309,15 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 	tmp.setConstant(epsilon_star);
 	en_list_star=nu_star/Dnu_star - tmp;
 
+	std::cout << "Before w and h star" << std::endl;
+	std::cout << "en_list_star =" << en_list_star << std::endl;
+	std::cout << "n_at_numax_ref =" << n_at_numax_ref << std::endl;
+	
 	tmp.resize(en_list_star.size());
-	tmp.setConstant(en_list_star.size());
+	tmp.setConstant(n_at_numax_ref);
 	tmp_ref=en_list_ref - tmp;
 	for (int en=0; en<en_list_star.size(); en++){
+		std::cout << "en=" << en << std::endl;
 		w_tmp=lin_interpol(tmp_ref, gamma_ref/gamma_ref_at_numax, en_list_star[en] - n_at_numax_star);
 		h_tmp=lin_interpol(tmp_ref, height_ref/height_ref_at_numax, en_list_star[en] - n_at_numax_star); 
 		w_star[en]=w_tmp;
@@ -749,6 +759,10 @@ Cfg_synthetic_star test_make_synthetic_asymptotic_star(void){
 	// Define global Pulsation parameters
 	int el=1;
 
+	// Set the current path variables
+	std::string cpath=getcwd(NULL, 0);
+
+
 	Cfg_synthetic_star cfg_star;
 	Params_synthetic_star params_out;
 
@@ -766,7 +780,7 @@ Cfg_synthetic_star test_make_synthetic_asymptotic_star(void){
 	cfg_star.rot_env_input=30.;
 	cfg_star.rot_ratio_input=5.;
 	cfg_star.rot_core_input=-1;
-	cfg_star.output_file_rot="test.rot";
+	cfg_star.output_file_rot=cpath + "/test.rot";
 
 	cfg_star.maxHNR_l0=5.;
 
@@ -787,7 +801,7 @@ Cfg_synthetic_star test_make_synthetic_asymptotic_star(void){
 	cfg_star.Gamma_max_l0=1;
 	cfg_star.Teff_star=-1;
 	cfg_star.H0_spread=0;
-	cfg_star.filetemplate="templates/11771760.template";
+	cfg_star.filetemplate=cpath + "/templates/11771760.template";
 
 	cfg_star.sigma_p=0;
 	cfg_star.sigma_m=0;
