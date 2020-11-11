@@ -15,7 +15,7 @@
 #	 nu_p(nu), nu_g(nu), Dnu_p(nu) and DPl(nu) (meaning handling glitches)
 */
 // ------------------
-#pragma once
+//#pragma once
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
@@ -213,6 +213,15 @@ long double gnu_fct(const long double nu, const long double nu_g, const long dou
 long double asympt_nu_p(const long double Dnu_p, const int np, const long double epsilon, const int l, 
 	const long double delta0l, const long double alpha, const long double nmax, long double r=0)
 {
+
+	std::cout << " np=" << np << std::endl;
+	std::cout << " epsilon=" << epsilon << std::endl;
+	std::cout << " l=" << l << std::endl;
+	std::cout << " delta0l=" << delta0l << std::endl;
+	std::cout << " alpha=" << alpha << std::endl;
+	std::cout << " nmax=" << nmax << std::endl;
+	std::cout << " Dnu_p=" << Dnu_p << std::endl;
+	
 
 	long double nu_p=(np + epsilon + l/2. + delta0l + alpha*std::pow(np - nmax, 2) / 2)*Dnu_p;
 	if (nu_p < 0.0)

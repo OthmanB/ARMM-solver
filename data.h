@@ -173,9 +173,10 @@ struct Cfg_synthetic_star{
 	long double Dnu_star;
 	long double epsilon_star;
 	long double delta0l_percent_star;
+	long double beta_p_star;
 	long double alpha_p_star;
 	long double nmax_star;
-	long double DP1_star;
+	long double DPl_star;
 	long double alpha_g_star;
 	long double q_star;
 	long double fmin; 
@@ -187,7 +188,7 @@ struct Cfg_synthetic_star{
 	long double rot_ratio_input; 
 	long double rot_core_input;
 	std::string output_file_rot;
-	long double Vl;
+	VectorXd Vl;
 	long double H0_spread;
 	std::string filetemplate;
 	long double sigma_p;
