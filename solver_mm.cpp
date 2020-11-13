@@ -214,6 +214,7 @@ long double asympt_nu_p(const long double Dnu_p, const int np, const long double
 	const long double delta0l, const long double alpha, const long double nmax, long double r=0)
 {
 
+/*
 	std::cout << " np=" << np << std::endl;
 	std::cout << " epsilon=" << epsilon << std::endl;
 	std::cout << " l=" << l << std::endl;
@@ -221,8 +222,7 @@ long double asympt_nu_p(const long double Dnu_p, const int np, const long double
 	std::cout << " alpha=" << alpha << std::endl;
 	std::cout << " nmax=" << nmax << std::endl;
 	std::cout << " Dnu_p=" << Dnu_p << std::endl;
-	
-
+*/	
 	long double nu_p=(np + epsilon + l/2. + delta0l + alpha*std::pow(np - nmax, 2) / 2)*Dnu_p;
 	if (nu_p < 0.0)
 	{
@@ -544,7 +544,12 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	if (sigma_p != 0)
 	{
 		deriv_p=Frstder_adaptive_reggrid(nu_p_all);
+	} else{
+		deriv_p.deriv.resize(nu_p_all.size());
+		deriv_p.deriv.setConstant(Dnu_p);
 	}
+	deriv_g.deriv.resize(nu_g_all.size());
+	deriv_g.deriv.setConstant(DPl);
 	//if (sigma_g != 0)
 	//{
 	//	deriv_g=Frstder_adaptive_reggrid(1e6 * nu_g_all.cwiseInverse());
@@ -661,6 +666,8 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 		nu_sols.nu_m=nu_m_all;
 		nu_sols.nu_p=nu_p_all;
 		nu_sols.nu_g=nu_g_all;
+		nu_sols.dnup=deriv_p.deriv;
+		nu_sols.dPg=deriv_g.deriv;
 		return nu_sols;
 	} else
 	{

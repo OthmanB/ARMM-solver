@@ -156,7 +156,7 @@ struct Data_coresolver{
 };
 
 struct Data_eigensols{
-	VectorXd nu_p, nu_g, nu_m;
+	VectorXd nu_p, nu_g, nu_m, dnup, dPg; // The two last ones are derivatives of nu_p ~ Dnu and 1/nu_g ~ DPl
 };
 
 struct Data_eigensols_all{

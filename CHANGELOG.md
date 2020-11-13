@@ -1,7 +1,14 @@
-### 0.3alpha [99%]
+### 0.35alpha [0%] [IN PROGRESS]
+	Take back 0.3alpha and test the new implementations regarding random number generators for randomness of nu_p and nu_m 
+
+### 0.3alpha [100%]
 	Implementation of all relevant function from bump_DP.py into bump_DP.cpp [100%]
-	Testing all the functions internally in the c++ and check the behavior of of the master code creating values [80%]
-	Testing comparatively with python code the master functions... BEWARE THAT SMALL BUGS WERE FOUND THAT MAY CHANGE THE RESULTS
+	Testing all the functions internally in the c++ and check the behavior of of the master code creating values [100%]
+	Testing comparatively with python code the master functions... BEWARE THAT SMALL BUGS WERE FOUND THAT MAY CHANGE THE RESULTS [100%]
+	Note:  I found out that the 'fast' method used to compute ksi_fct2() is not accurate enough. While this inaccuracy could be acceptable
+		   for RGB (as the spectrum resolution does not allow us to resolve the modes that are mostly affected by the approximation), it is not
+		   the case for SG. After some thought, I decided to just use the 'precise' method, assuming a resolutino of 4 years in the data for defining
+		   the normalisation constant. It slower than the fast method, but remains managable in the C++ implementation.
 	
 ### 0.2alpha [100%]
 	Implementation of solve_mm_asymptotic_O2p() [100%]

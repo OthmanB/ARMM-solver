@@ -37,6 +37,7 @@
 VectorXd ksi_fct1(const VectorXd nu, const long double nu_p, const long double nu_g, const long double Dnu_p, const long double DPl, const long double q)
 {
 	
+
 	const long double pi = 3.141592653589793238L;
 	VectorXd cos_upterm, cos_downterm, front_term, tmp(nu.size()), tmp2(nu.size()), ksi(nu.size());
 
@@ -53,6 +54,20 @@ VectorXd ksi_fct1(const VectorXd nu, const long double nu_p, const long double n
 	tmp.setConstant(1);
 	ksi=front_term.cwiseProduct(tmp2);
 	ksi=(tmp + ksi).cwiseInverse();
+
+/*
+	std::cout << "---- Debug ksi_fct1 ----" << std::endl;
+	std::cout << "nu_p = " << nu_p << std::endl;
+	std::cout << "nu_g = " << nu_g << std::endl;
+	std::cout << "cos_upterm =" << cos_upterm << std::endl;
+	std::cout << "cos_downterm =" << cos_downterm << std::endl;
+	std::cout << "front_term =" << front_term << std::endl;
+	std::cout << "front * cos^2/sin^2 =" << front_term.cwiseProduct(tmp2) << std::endl;
+	std::cout << "ksi = " << ksi << std::endl;
+	std::cout << "-----" << std::endl;
+	std::cout << "-----" << std::endl;
+	exit(EXIT_SUCCESS);
+*/
 	return ksi;
 }
 
@@ -80,6 +95,7 @@ VectorXd ksi_fct2(const VectorXd nu, const VectorXd nu_p, const VectorXd nu_g, c
 	long double norm_coef, fmin,fmax;
 
 	ksi_pg.setConstant(nu.size());
+	ksi_pg.setZero();
 	for (int np=0; np<Lp;np++)
 	{
 		for (int ng=0; ng<Lg; ng++)
@@ -91,29 +107,31 @@ VectorXd ksi_fct2(const VectorXd nu, const VectorXd nu_p, const VectorXd nu_g, c
 	if (norm_method == "fast"){
 		norm_coef=ksi_pg.maxCoeff();
 	}
-	else{ // We build a very resolved 'continuous function of the frequency to calculate the norm'
+	else
+	{ // We build a very resolved 'continuous function of the frequency to calculate the norm'
 		if (nu_p.minCoeff() >= nu_g.minCoeff()){
 			fmin=nu_g.minCoeff();
 		} else{
 			fmin=nu_p.minCoeff();
 		}
 		if (nu_p.maxCoeff() >= nu_g.maxCoeff()){
-			fmin=nu_p.maxCoeff();
+			fmax=nu_p.maxCoeff();
 		} else{
-			fmin=nu_g.maxCoeff();
+			fmax=nu_g.maxCoeff();
 		}
 		Ndata=int((fmax-fmin)/resol);
 		nu4norm=linspace(fmin, fmax, Ndata);
 		ksi4norm.resize(nu4norm.size());
+		ksi4norm.setZero();
 		for (int np=0; np<Lp; np++){
 			for (int ng=0; ng<Lg; ng++){
 				ksi_tmp=ksi_fct1(nu4norm, nu_p[np], nu_g[ng], Dnu_p[np], DPl[ng], q);
 				ksi4norm=ksi4norm + ksi_tmp;
-			}
+			}	
 		}
 		norm_coef=ksi4norm.maxCoeff();
 	}
-	ksi_pg=ksi_pg/norm_coef;	
+	ksi_pg=ksi_pg/norm_coef;
 	return ksi_pg;
 }
 
@@ -136,12 +154,12 @@ VectorXd gamma_l_fct2(const VectorXd ksi_pg, const VectorXd nu_m, const VectorXd
 			width_l[i]=width0_at_l * (1. - ksi_pg[i])/ std::sqrt(hl_h0_ratio[i]);
 		}
 		// ---- DEBUG LINES ----
-		std::cout << "   DEBUG FOR gamma_l_fct2..." << std::endl;
-		std::cout << "ksi_pg     ,   width_l    ,   hl_h0_ratio" << std::endl;
-		for (int i=0; i<ksi_pg.size(); i++)
-		{
-			std::cout << ksi_pg[i] << "    " << width_l[i] << "    "  << hl_h0_ratio[i] << std::endl;
-		}
+		//std::cout << "   DEBUG FOR gamma_l_fct2..." << std::endl;
+		//std::cout << "ksi_pg     ,   width_l    ,   hl_h0_ratio" << std::endl;
+		//for (int i=0; i<ksi_pg.size(); i++)
+		//{
+		//	std::cout << ksi_pg[i] << "    " << width_l[i] << "    "  << hl_h0_ratio[i] << std::endl;
+		//}
 	}
 	return width_l;
 }
@@ -156,16 +174,20 @@ VectorXd h_l_rgb(const VectorXd ksi_pg)
 	hl_h0=tmp - ksi_pg;
 	hl_h0=hl_h0.array().sqrt();
 	pos=where_dbl(hl_h0, 0, tol);
-	for (int i=0;i<pos.size();i++)
+	if(pos[0] != -1)
 	{
-		hl_h0[pos[i]] = 1e-10;
+		for (int i=0;i<pos.size();i++)
+		{
+			hl_h0[pos[i]] = 1e-10;
+		}
 	}
 	// --- DEBUG LINES ---
-	std::cout << "   DEBUG FOR h_l_rgb..." << std::endl;
-	for (int i=0; i<ksi_pg.size(); i++)
-	{
-		std::cout << ksi_pg[i] << "    " << hl_h0[i] << std::endl;
-	}
+	//std::cout << "   DEBUG FOR h_l_rgb..." << std::endl;
+	//std::cout << "  ksi_pg       hl_l0 " << std::endl;
+	//for (int i=0; i<ksi_pg.size(); i++)
+	//{
+	//	std::cout << ksi_pg[i] << "    " << hl_h0[i] << std::endl;
+	//}
 	return hl_h0;
 }
 
@@ -274,12 +296,9 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 
 	template_data= read_templatefile(file);
 
-	std::cout << "after reading templatefile" << std::endl;
 	nu_ref=template_data.data_ref.col(0); //[:,0] // CHECKS NEEDED REALLY COL OR IS IT ROW?
 	height_ref=template_data.data_ref.col(1);//[:,1]
 	gamma_ref=template_data.data_ref.col(2);//[:,2]
-
-	std::cout << "after getting nu_ref height_ref, and gamma_ref" << std::endl;
 	
 	height_ref_at_numax=lin_interpol(nu_ref, height_ref, template_data.numax_ref);
 	gamma_ref_at_numax=lin_interpol(nu_ref, gamma_ref, template_data.numax_ref);
@@ -298,7 +317,6 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 		epsilon_star=epsilon_star + ( std::fmod(nu_star[i]/Dnu_star, 1));
 	}
 	epsilon_star=epsilon_star/nu_star.size();
-	std::cout << "After epsilon_star" << std::endl;
 
 	n_at_numax_star=numax_star/Dnu_star - epsilon_star;
 	
@@ -309,15 +327,14 @@ Data_2vectXd width_height_load_rescale(const VectorXd nu_star, const long double
 	tmp.setConstant(epsilon_star);
 	en_list_star=nu_star/Dnu_star - tmp;
 
-	std::cout << "Before w and h star" << std::endl;
-	std::cout << "en_list_star =" << en_list_star << std::endl;
-	std::cout << "n_at_numax_ref =" << n_at_numax_ref << std::endl;
-	
-	tmp.resize(en_list_star.size());
-	tmp.setConstant(n_at_numax_ref);
-	tmp_ref=en_list_ref - tmp;
+	tmp_ref.resize(en_list_ref.size());
+	tmp_ref.setConstant(n_at_numax_ref);
+			
+	tmp_ref=en_list_ref - tmp_ref;
+
+	w_star.resize(en_list_star.size());
+	h_star.resize(en_list_star.size());
 	for (int en=0; en<en_list_star.size(); en++){
-		std::cout << "en=" << en << std::endl;
 		w_tmp=lin_interpol(tmp_ref, gamma_ref/gamma_ref_at_numax, en_list_star[en] - n_at_numax_star);
 		h_tmp=lin_interpol(tmp_ref, height_ref/height_ref_at_numax, en_list_star[en] - n_at_numax_star); 
 		w_star[en]=w_tmp;
@@ -427,12 +444,13 @@ long double rot_envelope(long double med=60., long double sigma=3.)
 */
 VectorXd dnu_rot_2zones(const VectorXd ksi_pg, const long double rot_envelope, const long double rot_core)
 {
-	VectorXd rc(ksi_pg.size()), re(ksi_pg.size());
+	//VectorXd rc(ksi_pg.size()), re(ksi_pg.size());
+	VectorXd re(ksi_pg.size());
 
-	rc.setConstant(rot_core/2);
+	//rc.setConstant(rot_core/2);
 	re.setConstant(rot_envelope);
 
-	return ksi_pg*(rc - re) + re;
+	return ksi_pg*(rot_core/2 - rot_envelope) + re;
 }	
 
 //Assumptions: nu_max is derived from the requested Dnu_star parameter using the relation from Stello+2009. 
@@ -510,9 +528,9 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	int en, el, np_min, np_max;
 	long double r, tmp, resol, c, xmin ,xmax, delta0l_star;
 	VectorXi posOK;
-	VectorXd tmpXd, noise_params_harvey1985(4), noise_l0, hmax_l0, Dnu_p, DPl, ksi_pg, h1_h0_ratio,
-		nu_p_l1, nu_g_l1, 
-		nu_l0, nu_m_l1, nu_l2, nu_l3, 
+	VectorXd tmpXd, noise_params_harvey1985(4), noise_l0, hmax_l0, Dnu_p, DPl, ksi_pg, h1_h0_ratio;
+		//nu_p_l1, nu_g_l1, 
+	VectorXd nu_l0, nu_m_l1, nu_l2, nu_l3, 
 		height_l0, height_l1, height_l2, height_l3, height_l1p, 
 		width_l0, width_l1, width_l2, width_l3,
 		a1_l1, a1_l2, a1_l3; // Simulate a single harvey profile
@@ -558,29 +576,25 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 		tmp=asympt_nu_p(cfg_star.Dnu_star, en, cfg_star.epsilon_star, 0, 0, cfg_star.alpha_p_star, cfg_star.nmax_star);
 		nu_l0[en-np_min]=tmp;
 	}
-	
+/*	
 	std::cout << "cfg_star.Dnu_star=" << cfg_star.Dnu_star << std::endl;
 	std::cout << "cfg_star.epsilon_star=" << cfg_star.epsilon_star << std::endl;
 	std::cout << "cfg_star.alpha_p_star=" << cfg_star.alpha_p_star << std::endl;
 	std::cout << "cfg_star.nmax_star=" << cfg_star.nmax_star << std::endl;
 	std::cout << "cfg_star.numax_star=" << cfg_star.numax_star << std::endl;
 	std::cout << "nu_l0=" <<  nu_l0 << std::endl;
-
-	std::cout << "before width_height_load_rescale()" << std::endl;
-	
+*/
 	width_height_l0=width_height_load_rescale(nu_l0, cfg_star.Dnu_star, cfg_star.numax_star, cfg_star.filetemplate); // Function that ensure that Hmax and Wplateau is at numax
-	
-	std::cout << "after width_height_load_rescale()" << std::endl;
-	
+	width_l0=width_height_l0.vecXd1;
+	height_l0=width_height_l0.vecXd2;
+		
 	noise_l0.resize(nu_l0.size());
 	noise_l0.setZero();
 	noise_l0=harvey1985(noise_params_harvey1985, nu_l0, noise_l0, 1); // Iterate on Noise_l0 to update it by putting the noise profile with one harvey profile
-
-	std::cout << "after harvey1985()" << std::endl;
 	
 	c=1; // This is the ratio of HNR between the reference star and the target simulated star: maxHNR_l0/maxHNR_ref.
 	hmax_l0=cfg_star.maxHNR_l0*noise_l0*c;
-	height_l0=height_l0*hmax_l0; // height_l0 being normalised to 1 on width_height_load_rescale, getting the desired hmax_l0 requires just to multiply height_l0 by hmax_l0
+	height_l0=height_l0.cwiseProduct(hmax_l0); // height_l0 being normalised to 1 on width_height_load_rescale, getting the desired hmax_l0 requires just to multiply height_l0 by hmax_l0
 
 	if (std::abs(cfg_star.H0_spread) > 0)
 	{
@@ -609,9 +623,7 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	// Use the solver to get mixed modes
 	el=1;
 	delta0l_star=-el*(el + 1) * cfg_star.delta0l_percent_star / 100.;
-	freqs=solve_mm_asymptotic_O2p(cfg_star.Dnu_star, cfg_star.epsilon_star, el, delta0l_star, cfg_star.alpha_p_star, cfg_star.alpha_p_star, cfg_star.DPl_star, cfg_star.alpha_g_star, cfg_star.q_star, cfg_star.sigma_p, cfg_star.fmin, cfg_star.fmax, resol, false, false);
-	
-	std::cout << "after solve_mm_asymptotic_O2p()" << std::endl;
+	freqs=solve_mm_asymptotic_O2p(cfg_star.Dnu_star, cfg_star.epsilon_star, el, delta0l_star, cfg_star.alpha_p_star, cfg_star.alpha_p_star, cfg_star.DPl_star, cfg_star.alpha_g_star, cfg_star.q_star, cfg_star.sigma_p, cfg_star.fmin, cfg_star.fmax, resol, true, false);
 	
 	// Filter solutions that endup at frequencies higher/lower than the nu_l0 because we will need to extrapolate height/widths otherwise...
 	posOK=where_in_range(freqs.nu_m, nu_l0.minCoeff(), nu_l0.maxCoeff(), false);
@@ -625,31 +637,30 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 			nu_m_l1[i]=nu_m_l1[i]+r;
 		}
 	}
-	std::cout << "after nu_m_l1 is defined" << std::endl;
 	
 	// Generating widths profiles for l=1 modes using the ksi function
-	Dnu_p.resize(freqs.nu_p.size());
-	Dnu_p.setConstant(cfg_star.Dnu_star); // MIGHT NEED TO BE ADAPTED IN THE CASE OF THE DERIVATIVE IS NOT DNU ==> CURVATURE
-	std::cout << "see comment on Dnu_p before getting further" << std::endl;
-	exit(EXIT_SUCCESS);
-	DPl.resize(freqs.nu_g.size());
-	DPl.setConstant(cfg_star.DPl_star);
-	
-	ksi_pg=ksi_fct2(nu_m_l1, nu_p_l1, nu_g_l1, Dnu_p, DPl, cfg_star.q_star); // assunme Dnu_p, DPl and q constant
-	h1_h0_ratio=h_l_rgb(ksi_pg); // WARNING: Valid assummption only not too evolved RGB stars (below the bump, see Kevin mail 10 August 2019)
-//	std::cout << 'Len(h1_h0_ratio):',len(h1_h0_ratio))
+	Dnu_p=freqs.dnup;
+	DPl=freqs.dPg; 
 
+	ksi_pg=ksi_fct2(nu_m_l1, freqs.nu_p, freqs.nu_g, Dnu_p, DPl, cfg_star.q_star, "precise"); //"precise" // assume Dnu_p, DPl and q constant
+	h1_h0_ratio=h_l_rgb(ksi_pg); // WARNING: Valid assummption only not too evolved RGB stars (below the bump, see Kevin mail 10 August 2019)
+	
+	std::cout << "here -1" << std::endl;
 	height_l1p.resize(nu_m_l1.size());
-	for (int i=0; i<nu_l0.size();i++)
+	for (int i=0; i<nu_m_l1.size();i++)
 	{
 		tmp=lin_interpol(nu_l0, height_l0, nu_m_l1[i]);
 		height_l1p[i]=tmp;
 	}
+
+	std::cout << "here 0" << std::endl;
+
+	tmp=lin_interpol(nu_l0, height_l0, nu_m_l1[nu_l0.size()-1]);
 	height_l1p=height_l1p*cfg_star.Vl[0];
-//	std::cout << 'Len(Height_l1p):', len(height_l1p))
-	height_l1=h1_h0_ratio * height_l1p;
+	height_l1=h1_h0_ratio.cwiseProduct(height_l1p);
 	width_l1=gamma_l_fct2(ksi_pg, nu_m_l1, nu_l0, width_l0, h1_h0_ratio, el);
 
+	std::cout << "here" << std::endl;
 	// Generating splittings with a two-zone averaged rotation rates
 	if (cfg_star.rot_env_input >=0)
 	{
@@ -673,19 +684,19 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 			exit(EXIT_SUCCESS);
 			//rot_env, rot_c, rot_env_true, rot_c_true=rot_2zones_v1(rot_env_input, cfg_star.numax_star, Teff_star, sigma_logg=0.1, randomize_core_rot=True, output_file_rot=output_file_rot)
 		}
-	}
+	}	
 	a1_l1=dnu_rot_2zones(ksi_pg, rot2data.rot_env, rot2data.rot_core);
-
 	// ------- l=2 modes -----
 	el=2;
 	delta0l_star=-el*(el + 1) * cfg_star.delta0l_percent_star / 100.;
-	nu_l2.resize(cfg_star.nmax_star-np_min);
-	for (int en=np_min; en< cfg_star.nmax_star;en++)
+	nu_l2.resize(np_max-np_min);
+	for (int en=np_min; en< np_max;en++)
 	{
 		tmp=asympt_nu_p(cfg_star.Dnu_star, en, cfg_star.epsilon_star, el, delta0l_star, cfg_star.alpha_p_star, cfg_star.nmax_star);
 		nu_l2[en-np_min]=tmp;
 	}
 
+	std::cout << "here 2" << std::endl;
 	// Filter solutions that endup at frequencies higher/lower than the nu_l0 because we will need to extrapolate height/widths otherwise...
 	posOK=where_in_range(nu_l2, nu_l0.minCoeff(), nu_l0.maxCoeff(), false);
 	tmpXd=nu_l2;
@@ -700,21 +711,21 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 		tmp=lin_interpol(nu_l0, width_l0, nu_l2[i]);
 		width_l2[i]=tmp;		
 	}
-
 	// Assume that the l=2 modes are only sensitive to the envelope rotation
 	a1_l2.resize(nu_l2.size());
 	a1_l2.setConstant(rot2data.rot_env);
 
+
+	std::cout << "here 3" << std::endl;
 	// ------ l=3 modes ----
 	el=3;
 	delta0l_star=-el*(el + 1) * cfg_star.delta0l_percent_star / 100.;
-	nu_l3.resize(cfg_star.nmax_star-np_min);
-	for (int en=np_min; en<cfg_star.nmax_star;en++)
+	nu_l3.resize(np_max-np_min);
+	for (int en=np_min; en<np_max;en++)
 	{
 		tmp=asympt_nu_p(cfg_star.Dnu_star, en, cfg_star.epsilon_star, el, delta0l_star, cfg_star.alpha_p_star, cfg_star.nmax_star);
 		nu_l3[en-np_min]=tmp;
 	}
-	
 	posOK=where_in_range(nu_l3, nu_l0.minCoeff(), nu_l0.maxCoeff(), false);
 	tmpXd=nu_l3;
 	nu_l3.resize(posOK.size());
@@ -734,8 +745,8 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	a1_l3.setConstant(rot2data.rot_env);//=numpy.repeat(rot_env, len(nu_l3))
 
 	params_out.nu_l0=nu_l0;
-	params_out.nu_p_l1=nu_p_l1;
-	params_out.nu_g_l1=nu_g_l1;
+	params_out.nu_p_l1=freqs.nu_p;
+	params_out.nu_g_l1=freqs.nu_g;
 	params_out.nu_m_l1=nu_m_l1;
 	params_out.nu_l2=nu_l2;
 	params_out.nu_l3=nu_l3;
@@ -755,14 +766,13 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 }
 
 
-Cfg_synthetic_star test_make_synthetic_asymptotic_star(void){
+Cfg_synthetic_star test_make_synthetic_asymptotic_star_sg(void){
 	// Define global Pulsation parameters
 	int el=1;
 
 	// Set the current path variables
 	std::string cpath=getcwd(NULL, 0);
-
-
+	
 	Cfg_synthetic_star cfg_star;
 	Params_synthetic_star params_out;
 
@@ -771,7 +781,7 @@ Cfg_synthetic_star test_make_synthetic_asymptotic_star(void){
 	cfg_star.Dnu_star=55;
 	cfg_star.epsilon_star=0.1;
 	cfg_star.delta0l_percent_star=1./100;
-	cfg_star.beta_p_star=0.0076;
+	cfg_star.beta_p_star=0.00;
 
 	cfg_star.DPl_star=350.;
 	cfg_star.alpha_g_star=0.; // Parameters for g modes that follow exactly the asymptotic relation of g modes for a star with radiative core
@@ -801,17 +811,130 @@ Cfg_synthetic_star test_make_synthetic_asymptotic_star(void){
 	cfg_star.Gamma_max_l0=1;
 	cfg_star.Teff_star=-1;
 	cfg_star.H0_spread=0;
-	cfg_star.filetemplate=cpath + "/templates/11771760.template";
+	//cfg_star.filetemplate=cpath + "/templates/11771760.template";
+	cfg_star.filetemplate=cpath + "/templates/Sun.template";
 
 	cfg_star.sigma_p=0;
 	cfg_star.sigma_m=0;
 
 	params_out=make_synthetic_asymptotic_star(cfg_star);
+
+	std::cout << " ----- FINAL DIAGNOSTICS ------" << std::endl;
+	std::cout << "[en]   type   l    nu_l        w_l         h_l         a1_l" << std::endl;
+	for (int en=0; en<params_out.nu_l0.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   0    " << params_out.nu_l0[en] <<  "       " << params_out.width_l0[en] <<  "       "  << params_out.height_l0[en] <<    "   0  " << std::endl;
+	}
+	for (int en=0; en<params_out.nu_p_l1.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   1    " << params_out.nu_p_l1[en] <<  "       " << "          -             " <<  "       "  << "          -             " <<  "   -  " << std::endl;
+	}
+	for (int en=0; en<params_out.nu_g_l1.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "g   1    " << params_out.nu_g_l1[en] <<  "       " << "          -             " <<  "       "  << "          -             " <<  "   -  " << std::endl;
+	}
+	for (int en=0; en<params_out.nu_m_l1.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "m   1    " << params_out.nu_m_l1[en] <<  "       " << params_out.width_l1[en] <<  "       "  << params_out.height_l1[en] <<  "     " << params_out.a1_l1[en] << std::endl;
+	}
+	for (int en=0; en<params_out.nu_l2.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   2    " << params_out.nu_l2[en] <<  "       " << params_out.width_l2[en] <<  "       "  << params_out.height_l2[en] <<  "    "  << params_out.a1_l2[en] << std::endl;
+	}
+	for (int en=0; en<params_out.nu_l3.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   3    " << params_out.nu_l3[en] <<  "       " << params_out.width_l3[en] <<  "       "  << params_out.height_l3[en] <<  "   "  << params_out.a1_l3[en] << std::endl;
+	}
+	std::cout << " ------------------------------" << std::endl;
+	return cfg_star;
+}
+
+
+Cfg_synthetic_star test_make_synthetic_asymptotic_star_rgb(void){
+	// Define global Pulsation parameters
+	int el=1;
+
+	// Set the current path variables
+	std::string cpath=getcwd(NULL, 0);
+	
+	Cfg_synthetic_star cfg_star;
+	Params_synthetic_star params_out;
+
+	cfg_star.output_file_rot=" ";
+
+	cfg_star.Dnu_star=15;
+	cfg_star.epsilon_star=0.1;
+	cfg_star.delta0l_percent_star=1./100;
+	cfg_star.beta_p_star=0.00;
+
+	cfg_star.DPl_star=80.;
+	cfg_star.alpha_g_star=0.; // Parameters for g modes that follow exactly the asymptotic relation of g modes for a star with radiative core
+	cfg_star.q_star=0.15;
+
+	cfg_star.rot_env_input=30.;
+	cfg_star.rot_ratio_input=5.;
+	cfg_star.rot_core_input=-1;
+	cfg_star.output_file_rot=cpath + "/test.rot";
+
+	cfg_star.maxHNR_l0=5.;
+
+	// Define the frequency range for the calculation by (1) getting numax from Dnu and (2) fixing a range around numax
+	cfg_star.numax_star=numax_from_stello2009(cfg_star.Dnu_star, 0); // Second argument is the random spread
+	cfg_star.fmin=cfg_star.numax_star - 6*cfg_star.Dnu_star;
+	cfg_star.fmax=cfg_star.numax_star + 6*cfg_star.Dnu_star;
+
+	cfg_star.nmax_star=cfg_star.numax_star/cfg_star.Dnu_star - cfg_star.epsilon_star;
+	cfg_star.alpha_p_star=cfg_star.beta_p_star/cfg_star.nmax_star;
+
+	cfg_star.noise_params_harvey_like.resize(8);
+	cfg_star.Vl.resize(3);
+
+	cfg_star.noise_params_harvey_like <<  1., -2. , 0. , 1. ,-1. , 0. , 2.  ,1.;
+	cfg_star.Vl << 1.5,0.5, 0.07;
+	
+	cfg_star.Gamma_max_l0=1;
+	cfg_star.Teff_star=-1;
+	cfg_star.H0_spread=0;
+	//cfg_star.filetemplate=cpath + "/templates/11771760.template";
+	cfg_star.filetemplate=cpath + "/templates/Sun.template";
+
+	cfg_star.sigma_p=0;
+	cfg_star.sigma_m=0;
+
+	params_out=make_synthetic_asymptotic_star(cfg_star);
+
+	std::cout << " ----- FINAL DIAGNOSTICS ------" << std::endl;
+	std::cout << "[en]   type   l    nu_l        w_l         h_l         a1_l" << std::endl;
+	for (int en=0; en<params_out.nu_l0.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   0    " << params_out.nu_l0[en] <<  "       " << params_out.width_l0[en] <<  "       "  << params_out.height_l0[en] <<    "   0  " << std::endl;
+	}
+	for (int en=0; en<params_out.nu_p_l1.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   1    " << params_out.nu_p_l1[en] <<  "       " << "          -             " <<  "       "  << "          -             " <<  "   -  " << std::endl;
+	}
+	for (int en=0; en<params_out.nu_g_l1.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "g   1    " << params_out.nu_g_l1[en] <<  "       " << "          -             " <<  "       "  << "          -             " <<  "   -  " << std::endl;
+	}
+	for (int en=0; en<params_out.nu_m_l1.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "m   1    " << params_out.nu_m_l1[en] <<  "       " << params_out.width_l1[en] <<  "       "  << params_out.height_l1[en] <<  "     " << params_out.a1_l1[en] << std::endl;
+	}
+	for (int en=0; en<params_out.nu_l2.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   2    " << params_out.nu_l2[en] <<  "       " << params_out.width_l2[en] <<  "       "  << params_out.height_l2[en] <<  "    "  << params_out.a1_l2[en] << std::endl;
+	}
+	for (int en=0; en<params_out.nu_l3.size(); en++ )
+	{
+		std::cout << "[" << en << "]   " << "p   3    " << params_out.nu_l3[en] <<  "       " << params_out.width_l3[en] <<  "       "  << params_out.height_l3[en] <<  "   "  << params_out.a1_l3[en] << std::endl;
+	}
+	std::cout << " ------------------------------" << std::endl;
 	return cfg_star;
 }
 
 int main(void){
 	Cfg_synthetic_star cfg_star;
-	cfg_star=test_make_synthetic_asymptotic_star();
-
+	//cfg_star=test_make_synthetic_asymptotic_star_sg();
+	cfg_star=test_make_synthetic_asymptotic_star_rgb();
 }

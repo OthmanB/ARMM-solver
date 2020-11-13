@@ -9,13 +9,13 @@ void writeversion();
 #define APP_ID        "ARMM"
 #define APP_NAME      "ARMM solver"
 #define APP_DESC      "Generator of mixed modes based on the Asymptotic theory of the mixed modes"
-#define APP_VERSION   "0.20alpha"
+#define APP_VERSION   "0.30alpha"
 #define APP_DOMAIN    ""
 #define APP_SITE      ""
 #define APP_COPYRIGHT "Othman Benomar"
 
 #define APP_VER_MAJOR  0
-#define APP_VER_MINOR  2
+#define APP_VER_MINOR  3
 //#define APP_VER_BUILD  0
 //#define APP_VER_REV    0
 
