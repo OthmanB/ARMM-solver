@@ -1,4 +1,7 @@
-### 0.35alpha [0%] [IN PROGRESS]
+### 0.5 ###
+	Fully operational version with exhaustive testing.
+
+### 0.35alpha [0%] [100%]
 	Take back 0.3alpha and test the new implementations regarding random number generators for randomness of nu_p and nu_m 
 
 ### 0.3alpha [100%]

@@ -498,7 +498,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	np_max=int(ceil(fmax/Dnu_p - epsilon - el/2 - delta0l));
 
 	np_min=int(floor(np_min - alpha*std::pow(np_min - nmax, 2) /2.));
-	np_max=int(ceil(np_max - alpha*std::pow(np_max - nmax, 2) /2.)); // CHECK THIS DUE TO - -
+	np_max=int(ceil(np_max + alpha*std::pow(np_max - nmax, 2) /2.)); // CHECK THIS DUE TO - -
 
 	ng_min=int(floor(1e6/(fmax*DPl) - alpha));
 	ng_max=int(ceil(1e6/(fmin*DPl) - alpha));
@@ -530,6 +530,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 		}
 		nu_p_all[np-np_min]=nu_p;
 	}
+
 	for (int ng=ng_min; ng<ng_max;ng++)
 	{
 		//if (sigma_g == 0)
@@ -541,6 +542,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 		//}
 		nu_g_all[ng-ng_min]=nu_g;
 	}
+
 	if (sigma_p != 0)
 	{
 		deriv_p=Frstder_adaptive_reggrid(nu_p_all);
@@ -550,6 +552,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	}
 	deriv_g.deriv.resize(nu_g_all.size());
 	deriv_g.deriv.setConstant(DPl);
+
 	//if (sigma_g != 0)
 	//{
 	//	deriv_g=Frstder_adaptive_reggrid(1e6 * nu_g_all.cwiseInverse());
