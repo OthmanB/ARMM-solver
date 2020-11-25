@@ -1,7 +1,12 @@
-### 0.5 ###
-	Fully operational version with exhaustive testing.
+### 0.55 [100%]
+	Including a new function 'solve_mm_asymptotic_O2from_l0()' inside solver_mm.cpp that can be used to generate l>0 p modes
+	using a series of provided l=0 modes. This differs from solve_mm_asymptotic_O2p() from the fact that Dnu_p, epsilon, fmin, fmax
+	alpha and nmax are not required because the new introduced approach treat the Oj(n), with j>1 terms as descrived by the l=0 p modes. 
+	This new function is mostly useful for fitting the asymptotic relation of the mixed modes over a spectra.
 
-### 0.35alpha [0%] [100%]
+### 0.5 ###
+	Fully operational version with exhaustive testing.	
+### 0.35alpha [100%]
 	Take back 0.3alpha and test the new implementations regarding random number generators for randomness of nu_p and nu_m 
 
 ### 0.3alpha [100%]

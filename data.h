@@ -134,6 +134,10 @@ struct Data_Basic{
 	VectorXi vecXi; // Case number
 };
 
+
+// ----------------------------------------
+// ----- For mixed modes calculation ------
+// ----------------------------------------
 struct Data_2vectXd{
 	VectorXd vecXd1;
 	VectorXd vecXd2;		
@@ -148,9 +152,6 @@ struct template_file{
 	MatrixXd data_ref;
 };
 
-// ----------------------------------------
-// ----- For mixed modes calculation ------
-// ----------------------------------------
 struct Data_coresolver{
 	VectorXd nu_m, ysol, nu,pnu, gnu; //
 };
