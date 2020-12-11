@@ -12,7 +12,7 @@
 
 using Eigen::VectorXd;
 
-VectorXd linfit(const VectorXd x, const VectorXd y){
+VectorXd linfit(const VectorXd& x, const VectorXd& y){
 
    double sx, sy, st2;
    VectorXd v(x.size()), t(x.size()), tmp(x.size()), out(2);

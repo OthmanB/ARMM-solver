@@ -6,11 +6,11 @@
 
 using Eigen::VectorXd;
 
-const long double interp1( const long double x,  const VectorXd a);
+const long double interp1( const long double x,  const VectorXd& a);
 long double parabola( const long double x, const long double f_1, const long double f0, const long double f1 );
-long double interp2( const long double x, const VectorXd a);
+long double interp2( const long double x, const VectorXd& a);
 
-double lin_interpol(const VectorXd x, const VectorXd y, const double x_int){
+double lin_interpol(const VectorXd& x, const VectorXd& y, const double x_int){
 	/* Very simple function that linearly interpolate at the position x_int
 	   a curve (x,y). Here we assume that x.size() = y.size()
 	*/
@@ -54,7 +54,7 @@ return a*x_int+b;
 }
 
 
-VectorXd quad_interpol( const VectorXd a, const int m ){
+VectorXd quad_interpol( const VectorXd& a, const int m ){
    /* Function that quadratically interpolate the array a. 
     * The new size of the array is m, such that this 
     * function actually resample the array
@@ -72,7 +72,7 @@ VectorXd quad_interpol( const VectorXd a, const int m ){
 // -------------- Extra routines -------------------
 
   // linear interpolate x in an array
-const long double interp1( const long double x,  const VectorXd a)
+const long double interp1( const long double x,  const VectorXd& a)
 {
     int n=a.size();
 
@@ -83,7 +83,7 @@ const long double interp1( const long double x,  const VectorXd a)
 }
 
     // linear interpolate array a[] -> array b[]
-VectorXd  inter1parray( const VectorXd a, const int m )
+VectorXd  inter1parray( const VectorXd& a, const int m )
 {
     long double step = double( a.size() - 1 ) / (m - 1);
     VectorXd b(m);
@@ -103,7 +103,7 @@ long double parabola( const long double x, const long double f_1, const long dou
 }
 
     // quadratic interpolate x in an array
-long double interp2( const long double x, const VectorXd a){
+long double interp2( const long double x, const VectorXd& a){
     if( x <= .5  ||  x >= a.size() - 1.5 )
         return interp1( x, a);
     int j = int( x + .5 );

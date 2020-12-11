@@ -110,7 +110,7 @@ VectorXd linspace(const long double start_in, const long double end_in, const lo
 //    - x: input vector for which we want to know sign changes
 //    - return_indices: if true (default), the function returns positions at which the sign changed
 //						if false, it returns a vector of size(x)-1 with the tags for the sign changes (or not)
-VectorXi sign_change(const VectorXd x, bool return_indices=true)
+VectorXi sign_change(const VectorXd& x, bool return_indices=true)
 {
 	bool bool_tmp;
 	VectorXi s(x.size()-1), pos_s(x.size()-1);
@@ -162,7 +162,7 @@ VectorXi sign_change(const VectorXd x, bool return_indices=true)
 }
 
 
-VectorXd pnu_fct(const VectorXd nu, const long double nu_p)
+VectorXd pnu_fct(const VectorXd& nu, const long double nu_p)
 {
 	if (nu.size() == 0){
 		std::cout << "Vector nu in pnu_fct is of size 0. Cannot pursue." << std::endl;
@@ -182,7 +182,7 @@ long double pnu_fct(const long double nu, const long double nu_p)
 	return pnu;
 }
 
-VectorXd gnu_fct(const VectorXd nu, const long double nu_g, const long double Dnu_p, const long double DPl, const long double q)
+VectorXd gnu_fct(const VectorXd& nu, const long double nu_g, const long double Dnu_p, const long double DPl, const long double q)
 {
 	const long double pi = 3.141592653589793238L;
 	VectorXd X(nu.size()), gnu(nu.size()), tmp(nu.size());
@@ -241,30 +241,101 @@ long double asympt_nu_p(const long double Dnu_p, const int np, const long double
 # and on the asymptotic relation. This effectively allow to account for 2nd order terms of p modes
 # delta0l : small spacing 
 # r: Allows you to add an extra term to Dnu_p
+# WARNING: COULD BE SOME PROBLEMS ON THE EDGES... IF PROBLEM ARE FOUND, WE MIGHT NEED REPLACE THIS ALGO BY 
+#          AN INTERPOLATION AT NP... BUT MORE COSTLY
 */
-long double asympt_nu_p_from_l0(const VectorXd nu_l0, const long double Dnu_p, const int np, const long double epsilon, const int l, 
+
+long double asympt_nu_p_from_l0(const VectorXd& nu_l0, const long double Dnu_p, const int np, const long double epsilon, const int l, 
 	const long double delta0l, long double r=0)
 {
 	long double nu_p_l;
 
 	const int np_min0=int(floor(nu_l0.minCoeff()/Dnu_p - epsilon));
-	const int np_max0=int(ceil(nu_l0.maxCoeff()/Dnu_p - epsilon));
-
-	if (np >= np_min0 && np <= np_max0){ // If we are inside the nu_l0 range, we make the shifting
-		nu_p_l= nu_l0[np-np_min0] + l/2.*Dnu_p + delta0l;
+	//const int np_max0=int(ceil(nu_l0.maxCoeff()/Dnu_p - epsilon));
+	const int np_max0=int(floor(nu_l0.maxCoeff()/Dnu_p - epsilon));
+/*
+	std::cout << " ---- Inside asympt_nu_p_from_l0() ----" << std::endl;
+	std::cout << "np_min0 =" << np_min0 << std::endl;
+	std::cout << "np_max0 =" << np_max0 << std::endl;
+	std::cout << "Dnu_p = " << Dnu_p << std::endl;
+	std::cout << "epsilon = " << epsilon << std::endl;
+	std::cout << "delta0l = " << delta0l << std::endl;
+	std::cout << "      l = " << l << std::endl;
+	std::cout << "     np = " << np << std::endl;
+*/
+	if (np >= np_min0 && np < np_max0){ // If we are inside the nu_l0 range, we make the shifting
+/*
+		std::cout << "condition: np >= np_min0 && np < np_max0" << std::endl;
+		std::cout << "           np - np_min0 =" << np-np_min0 << std::endl;
+		std::cout << "           nu_l0.size() =" << nu_l0.size() << std::endl;
+*/
+		//if ((np-np_min0) < nu_l0.size()){
+			nu_p_l= nu_l0[np-np_min0] + l/2.*Dnu_p + delta0l;
+		//} else{
+		//	nu_p_l=(np + epsilon + l/2.)*Dnu_p + delta0l;
+		//}
 	} else{
+//		std::cout << "condition: ELSE" << std::endl;
 		nu_p_l=(np + epsilon + l/2.)*Dnu_p + delta0l;
 	}
 	if (nu_p_l < 0.0)
 	{
-		std::cout << " WARNING: NEGATIVE FREQUENCIES DETECTED: IMPOSING POSITIVITY" << std::endl;
+		std::cout << " WARNING: NEGATIVE FREQUENCIES DETECTED: IMPOSING to nu_p_l + r=0" << std::endl;
 		std::cout << " nu_p_l: " << nu_p_l << std::endl;
-		std::cout << " Cannot pursue " << std::endl;
-		exit(EXIT_FAILURE);
+		 nu_p_l=0;
+		 r=0;
+		//std::cout << " Cannot pursue " << std::endl;
+		//exit(EXIT_FAILURE);
 	}
 	return nu_p_l+r;
 }
 
+VectorXd asympt_nu_p_from_l0_Xd(const VectorXd& nu_l0, const long double Dnu_p, const int l, const long double delta0l, long double fmin=-1, long double fmax=-1)
+{
+	VectorXd nu_l0_long, nu_l1_long, nu_l1, tmp;
+	VectorXi posOK;
+
+	if (fmin == -1){
+		fmin=0;
+	}
+	if(fmax == -1){
+		fmax=nu_l0.maxCoeff() + 10*Dnu_p;
+	}
+	// Extend the vector by extrapolating edges... this to avoid bad behavior at the edges (missing frequencies)
+	nu_l0_long.resize(nu_l0.size() + 6);
+	nu_l1_long.resize(nu_l0.size() + 6);
+
+	nu_l0_long[0]=nu_l0.minCoeff() - 3*Dnu_p;
+	nu_l0_long[1]=nu_l0.minCoeff() - 2*Dnu_p;
+	nu_l0_long[2]=nu_l0.minCoeff() - Dnu_p;
+	for (int k=0; k<nu_l0.size();k++){
+		nu_l0_long[k+3]=nu_l0[k];
+	}
+	nu_l0_long[nu_l0_long.size()-3]=nu_l0.maxCoeff() + Dnu_p;
+	nu_l0_long[nu_l0_long.size()-2]=nu_l0.maxCoeff() + 2*Dnu_p;
+	nu_l0_long[nu_l0_long.size()-1]=nu_l0.maxCoeff() + 3*Dnu_p;
+
+
+	tmp.resize(nu_l0_long.size());
+	tmp.setConstant(l/2.*Dnu_p + delta0l);
+	nu_l1_long=nu_l0_long + tmp;
+	//std::cout << "nu_l1_long =" << nu_l1_long.transpose() << std::endl;
+
+    posOK=where_in_range(nu_l1_long, fmin, fmax, 0); // Remove frequencies out of the requested range
+    nu_l1.resize(posOK.size());
+    if (posOK[0] != -1){
+    	for (int k=0;k<posOK.size(); k++){
+    		nu_l1[k]=nu_l1_long[posOK[k]];
+    	}
+    	//std::cout << "nu_l1 =" << nu_l1.transpose() << std::endl;
+    }
+	else{
+		std::cout << "Serious issue when computing frequencies with solver_mm::asympt_nu_p_from_l0_Xd()" << std::endl;
+		std::cout << "No frequency found in the specified range (" << fmin << "," << fmax << "). Debug required" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	return nu_l1;
+}
 
 /* 
 	Compute the asymptotic relation for the g modes.
@@ -449,7 +520,7 @@ Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const 
 void test_sg_solver_mm()
 {
 
-	Data_coresolver sols;
+	Data_coresolver sols1, sols2;
 
 	const long double Dnu_p=60; //microHz
 	const long double DP1= 400; //microHz, typical for a RGB with Dnu_p=10 (see Fig. 1 of Mosser+2014, https://arxiv.org/pdf/1411.1082.pdf)
@@ -457,8 +528,10 @@ void test_sg_solver_mm()
 	// Generate a p-mode that follow exactly the asymptotic relation of p modes
 	const long double D0=Dnu_p/100. ;
 	const long double epsilon=0.4;
-	const long double np=10.;
-	const long double nu_p=(np + epsilon + 1./2.)*Dnu_p - 2*D0;
+	const long double np1=10.;
+	const long double nu_p1=(np1 + epsilon + 1./2.)*Dnu_p - 2*D0;
+	const long double np2=11.;
+	const long double nu_p2=(np2 + epsilon + 1./2.)*Dnu_p - 2*D0;
 
 	// Generate a g-mode that follow exactly the asymptotic relation of g modes for a star with radiative core
 	const long double ng=10;
@@ -468,8 +541,15 @@ void test_sg_solver_mm()
 	// Use the solver
 	const long double q=0.2; // Fix the coupling term
 	const long double resol=0.01;
-	sols=solver_mm(nu_p, nu_g, Dnu_p, DP1, q, nu_p - Dnu_p/2, nu_p + Dnu_p/2, resol, true, true, 0.05);
-	//std::cout << "nu_m: "  <<  sols.nu_m << std::endl;
+	sols1=solver_mm(nu_p1, nu_g, Dnu_p, DP1, q, nu_p1 - 3*Dnu_p/4, nu_p1 + 3*Dnu_p/4, resol, true, true, 0.05);
+	std::cout << " --- " << std::endl;
+	std::cout << " --- " << std::endl;
+	sols2=solver_mm(nu_p2, nu_g, Dnu_p, DP1, q, nu_p2 - 3*Dnu_p/4, nu_p2 + 3*Dnu_p/4, resol, true, true, 0.05);
+	std::cout << " --- " << std::endl;
+	std::cout << " --- " << std::endl;
+	std::cout << "nu_m1: "  <<  sols1.nu_m << std::endl;
+	std::cout << "nu_m2: "  <<  sols2.nu_m << std::endl;
+
 }
 
 
@@ -575,13 +655,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 		nu_g_all[ng-ng_min]=nu_g;
 	}
 
-	if (sigma_p != 0)
-	{
-		deriv_p=Frstder_adaptive_reggrid(nu_p_all);
-	} else{
-		deriv_p.deriv.resize(nu_p_all.size());
-		deriv_p.deriv.setConstant(Dnu_p);
-	}
+	deriv_p=Frstder_adaptive_reggrid(nu_p_all);
 	deriv_g.deriv.resize(nu_g_all.size());
 	deriv_g.deriv.setConstant(DPl);
 
@@ -619,6 +693,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 			//}
 			try
 			{
+				success=true;
 				sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p/4, nu_p + 3.*Dnu_p/4, resol, returns_axis, verbose, fact);
 			}
 			catch (...){
@@ -728,14 +803,12 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 //  resol: Control the grid resolution. Might be set to the resolution of the spectrum
 //  returns_pg_freqs: If true, returns the values for calculated p and g modes
 //  verbose: If true, print the solution on screen 
-Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd nu_l0_in, const int el, const long double delta0l, 
+Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd& nu_l0_in, const int el, const long double delta0l, 
     const long double DPl, const long double alpha, const long double q, const long double sigma_p, 
 	const long double resol, bool returns_pg_freqs=true, bool verbose=false)
 {
 
 	const bool returns_axis=true;
-	//const int Npmax=100;
-	//const int Ngmax=2000;
 	const int Nmmax=5000; //Ngmax+Npmax;
 	const int Nmax_attempts=4;
 	const double tol=2*resol; // Tolerance while searching for double solutions of mixed modes
@@ -746,6 +819,242 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd nu_l0_in, const int 
 	std::default_random_engine gen_p(seed_p); //, gen_g(seed_g);
 	std::normal_distribution<double> distrib_p(0.,sigma_p);
 	//std::normal_distribution<double> distrib_g(0.,sigma_g);
+
+	bool success;
+	int s0m, i, attempts, np_min, np_max, ng_min, ng_max;
+	double nu_p, nu_g, Dnu_p, epsilon, Dnu_p_local, DPl_local, fmin, fmax; // Dnu_p_local and DPl_local are important if modes does not follow exactly the asymptotic relation.
+	double fact=0.04;  // Default factor
+	double r;
+
+	VectorXi test;
+	VectorXd tmp, fit, nu_p_all, nu_g_all, nu_m_all(Nmmax), results(Nmmax);	
+
+	Data_coresolver sols_iter;
+	Data_eigensols nu_sols;
+	Deriv_out deriv_p, deriv_g;
+
+	tmp=linspace(0, nu_l0_in.size()-1, nu_l0_in.size());
+	fit=linfit(tmp, nu_l0_in); // fit[0] is the slope ==> Dnu and fit[1] is the ordinate at origin ==> fit[1]/fit[0] = epsilon
+	Dnu_p=fit[0];
+	epsilon=fit[1]/fit[0];
+	epsilon=epsilon - floor(epsilon);
+	fmin=nu_l0_in.minCoeff() - Dnu_p;
+	fmax=nu_l0_in.maxCoeff() + Dnu_p;
+
+	if (fmin < 0){
+		fmin=0;
+	}
+	//std::cout << "fmin =" << fmin << std::endl;
+	//std::cout << "fmax =" << fmax << std::endl;
+	
+	//std::cout << "       solver 0" << std::endl;
+
+	// Use fmin and fmax to define the number of pure p modes and pure g modes to be considered
+	//np_min=int(floor(fmin/Dnu_p - epsilon - el/2 - delta0l));
+	//np_max=int(ceil(fmax/Dnu_p - epsilon - el/2 - delta0l));
+
+	ng_min=int(floor(1e6/(fmax*DPl) - alpha));
+	ng_max=int(ceil(1e6/(fmin*DPl) - alpha));
+
+	if (np_min <= 0)
+	{
+		np_min=1;
+	}
+	if (fmin <= 150) // overrides of the default factor in case fmin is low
+	{
+		fact=0.01;
+	}
+	if (fmin <= 50)
+	{
+		fact=0.005;
+	}
+
+	// Handling the p and g modes, randomized or not
+	//nu_p_all.resize(np_max-np_min);
+	nu_g_all.resize(ng_max-ng_min);
+
+	// Step of extrapolating edges to avoid egdes effect when shifting l=0 frequencies to generate l=1 p modes
+	nu_p_all=asympt_nu_p_from_l0_Xd(nu_l0_in, Dnu_p, el, delta0l, fmin, fmax);
+	
+	for (int ng=ng_min; ng<ng_max;ng++)
+	{
+		nu_g=asympt_nu_g(DPl, ng, alpha);
+		nu_g_all[ng-ng_min]=nu_g;
+	}
+	//std::cout << "       solver 3" << std::endl;
+	
+	deriv_p=Frstder_adaptive_reggrid(nu_p_all);
+	deriv_g.deriv.resize(nu_g_all.size());
+	deriv_g.deriv.setConstant(DPl);
+	//std::cout << "       solver 4" << std::endl;
+	
+	s0m=0;
+	//for (int np=np_min; np<np_max; np++)
+	for (int np=0; np<nu_p_all.size(); np++)
+	{
+		for (int ng=0; ng<nu_g_all.size();ng++)
+		{
+			//nu_p=nu_p_all[np-np_min];
+			nu_p=nu_p_all[np];
+			//nu_g=nu_g_all[ng-ng_min];
+			nu_g=nu_g_all[ng];
+
+			// This is the local Dnu_p which differs from the average Dnu_p because of the curvature. The solver needs basically d(nu_p)/dnp , which is Dnu if O2 terms are 0.
+			//Dnu_p_local=deriv_p.deriv[np-np_min]; 
+			Dnu_p_local=deriv_p.deriv[np]; 
+			DPl_local=DPl; // The solver needs here d(nu_g)/dng. Here we assume no core glitches so that it is the same as DPl. 	
+			try
+			{
+				success=true;
+				//std::cout << "       solver 5" << std::endl;
+				//sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p/4, nu_p + 3.*Dnu_p/4, resol, returns_axis, verbose, fact);
+				sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3*Dnu_p/4, nu_p + 3*Dnu_p/4, resol, returns_axis, verbose, fact);
+				//std::cout << "       solver 6" << std::endl;
+	
+			}
+			catch (...){
+				success=false;
+				attempts=0;
+				try{
+					while (success ==false && attempts < Nmax_attempts){
+						try{
+							//std::cout << "       solver 7.1" << std::endl;
+							fact=fact/2;
+							sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p/4, nu_p + 3.*Dnu_p/4, resol, returns_axis, verbose, fact);
+							//std::cout << "       solver 7.2" << std::endl;
+							success=true;
+						}
+						catch(...){
+							std::cout << " Problem with the fine grid when searching for a solution... attempting to reduce factor to " << fact << "..." << std::endl;
+						}
+					}
+				}
+				catch(...){
+						std::cout << "ValueError in solver_mm... Debug information:"<< std::endl;
+						std::cout << " We excedeed the number of attempts to refine the grid by reducing factor" << std::endl;
+						//std::cout << " np_min = " << np_min << std::endl;
+						//std::cout << " np_max = " << np_max << std::endl;
+						//std::cout << " ng_min = " << ng_min << std::endl;
+						//std::cout << " ng_max = " << ng_max << std::endl;
+						std::cout << " ---------- " << std::endl;			
+						std::cout << " Dnu_p = " << Dnu_p << std::endl;
+						//std::cout << " np = " << np << std::endl;
+						std::cout << " epsilon= " << epsilon << std::endl;
+						std::cout << " delta0l= " << delta0l << std::endl;
+						std::cout << " ---------- " << std::endl;
+						std::cout << "   nu_p: " << nu_p << std::endl;
+						std::cout << "   nu_g: " << nu_g << std::endl;
+						std::cout << "   Dnu_p: " << Dnu_p << std::endl;
+						std::cout << "   DPl: " << DPl << std::endl;
+						std::cout << "   q: " << q << std::endl;
+						std::cout << "   numin=nu_p - Dnu_p: " << nu_p - Dnu_p << std::endl;
+						std::cout << "   numax=nu_p + Dnu_p: " << nu_p + Dnu_p << std::endl;
+						std::cout << "   resol: " << resol << std::endl;
+						std::cout << "   factor: " << fact << std::endl;
+						exit(EXIT_FAILURE);
+				}
+			}
+			//std::cout << "       solver 8" << std::endl;
+			if (verbose == true)
+			{
+				std::cout << "=========================================="  << std::endl;
+				std::cout << "nu_p: " << nu_p << std::endl;
+				std::cout << "nu_g: " << nu_g << std::endl;
+				std::cout << "solutions nu_m: " << sols_iter.nu_m << std::endl;
+			}
+			for (int s=0;s<sols_iter.nu_m.size();s++)
+			{
+				// Cleaning doubles: Assuming exact matches or within a tolerance range
+				test=where_dbl(nu_m_all, sols_iter.nu_m[s], tol);
+				if (test[0] == -1)
+				{
+					if (verbose == true){
+						std::cout << " ADDING a solution" << std::endl;
+						std::cout << "    nu_m_all.size()= " << nu_m_all.size() << std::endl;
+						std::cout << "    nu_p_all.size()= " << nu_p_all.size() << std::endl;
+						std::cout << "    nu_g_all.size()= " << nu_g_all.size() << std::endl;
+						std::cout << "    s0m               =" << s0m << std::endl;
+						std::cout << "    s                =" << s << std::endl;
+						std::cout << "    sols_iter.nu_m[s]=" << sols_iter.nu_m[s] << std::endl;
+						std::cout << "    nu_p             =" << nu_p << std::endl;
+						std::cout << "    nu_g             =" << nu_g << std::endl;
+						std::cout << " ------ " << std::endl;
+					}
+					nu_m_all[s0m]=sols_iter.nu_m[s];
+					s0m=s0m+1;
+				} else{
+					if (verbose == true){
+						std::cout << " DUPLICATE solution" << std::endl;
+						std::cout << "    nu_m_all.size()= " << nu_m_all.size() << std::endl;
+						std::cout << "    nu_p_all.size()= " << nu_p_all.size() << std::endl;
+						std::cout << "    nu_g_all.size()= " << nu_g_all.size() << std::endl;
+						std::cout << "    s0m               =" << s0m << std::endl;
+						std::cout << "    s                =" << s << std::endl;
+						std::cout << "    sols_iter.nu_m[s]=" << sols_iter.nu_m[s] << std::endl;
+						std::cout << "    nu_p             =" << nu_p << std::endl;
+						std::cout << "    nu_g             =" << nu_g << std::endl;
+						std::cout << " ------ " << std::endl;
+					}
+				}
+			}
+		}
+	}
+	//std::cout << "       solver 9" << std::endl;
+	
+	nu_m_all.conservativeResize(s0m);	
+	//nu_p_all.conservativeResize(s0m);	
+	//nu_g_all.conservativeResize(s0m);	
+
+	if (returns_pg_freqs == true)
+	{
+		nu_sols.nu_m=nu_m_all;
+		nu_sols.nu_p=nu_p_all;
+		nu_sols.nu_g=nu_g_all;
+		nu_sols.dnup=deriv_p.deriv;
+		nu_sols.dPg=deriv_g.deriv;
+		return nu_sols;
+	} else
+	{
+		nu_sols.nu_m=nu_m_all;
+		return nu_sols;
+	}
+}
+
+
+// This function uses solver_mm to find solutions from a spectrum
+// of pure p modes and pure g modes following the asymptotic relations at the second order for p modes and the first order for g modes
+//
+//	nu_l0_in: Frequencies for the l=0 modes. Used to derive nu_l1_p and therefore Dnu and epsilon
+//	el: Degree of the mode
+//	delta0l: first order shift related to core structure (and to D0)
+//	alpha_p: Second order shift relate to the mode curvature
+//	nmax: radial order at numax
+//	DPl: average Period spacing of the g modes
+//	alpha: phase offset for the g modes
+//	q: coupling strength
+//	sigma_p: standard deviation controling the randomisation of individual p modes. Set it to 0 for no spread
+//	sigma_g: standard deviation controling the randomisation of individial g modes. Set it to 0 for no spread
+//  resol: Control the grid resolution. Might be set to the resolution of the spectrum
+//  returns_pg_freqs: If true, returns the values for calculated p and g modes
+//  verbose: If true, print the solution on screen 
+Data_eigensols solve_mm_asymptotic_O2from_l0_DEV(const VectorXd& nu_l0_in, const int el, const long double delta0l, 
+    const long double DPl, const long double alpha, const long double q, const long double sigma_p, const long double sigma_g, 
+	const long double resol, bool returns_pg_freqs=true, bool verbose=false)
+{
+
+	const bool returns_axis=true;
+	//const int Npmax=100;
+	//const int Ngmax=2000;
+	const int Nmmax=5000; //Ngmax+Npmax;
+	const int Nmax_attempts=4;
+	const double tol=2*resol; // Tolerance while searching for double solutions of mixed modes
+	//const double sigma_g=0;  // FOR SOME REASON, WE FIND MULTIPLE SOLUTIONS WITHIN A NARROW RANGE WHEN USING SIGMA_G... SO IT TURNED IT OFF
+
+	unsigned seed_p = std::chrono::system_clock::now().time_since_epoch().count();
+	unsigned seed_g = std::chrono::system_clock::now().time_since_epoch().count();
+	std::default_random_engine gen_p(seed_p), gen_g(seed_g);
+	std::normal_distribution<double> distrib_p(0.,sigma_p);
+	std::normal_distribution<double> distrib_g(0.,sigma_g);
 
 	bool success;
 	int s0m, i, attempts, np_min, np_max, ng_min, ng_max;
@@ -809,13 +1118,13 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd nu_l0_in, const int 
 
 	for (int ng=ng_min; ng<ng_max;ng++)
 	{
-		//if (sigma_g == 0)
-		//{
+		if (sigma_g == 0)
+		{
 			nu_g=asympt_nu_g(DPl, ng, alpha);
-		//} else{
-		//	r = distrib_g(gen_g);
-		//	nu_g=asympt_nu_g(DPl, ng, alpha, r);
-		//}
+		} else{
+			r = distrib_g(gen_g);
+			nu_g=asympt_nu_g(DPl, ng, alpha, r);
+		}
 		nu_g_all[ng-ng_min]=nu_g;
 	}
 
@@ -859,7 +1168,8 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd nu_l0_in, const int 
 			//}
 			try
 			{
-				sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p/4, nu_p + 3.*Dnu_p/4, resol, returns_axis, verbose, fact);
+				//sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p_local/4, nu_p + 3.*Dnu_p_local/4, resol, returns_axis, verbose, fact);
+				sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3*Dnu_p_local/4, nu_p + 3*Dnu_p_local/4, resol, returns_axis, verbose, fact);
 			}
 			catch (...){
 				success=false;
@@ -868,7 +1178,7 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd nu_l0_in, const int 
 					while (success ==false && attempts < Nmax_attempts){
 						try{
 							fact=fact/2;
-							sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p/4, nu_p + 3.*Dnu_p/4, resol, returns_axis, verbose, fact);
+							sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 3.*Dnu_p_local/4, nu_p + 3.*Dnu_p_local/4, resol, returns_axis, verbose, fact);
 							success=true;
 						}
 						catch(...){
@@ -948,7 +1258,6 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd nu_l0_in, const int 
 		return nu_sols;
 	}
 }
-
 
 // Function to test solver_mm()
 // This is a typical RGB case, with  density of g modes >> density of p modes
@@ -1079,7 +1388,7 @@ Data_eigensols test_asymptotic_sg_O2()
 	// Define global Pulsation parameters
 	// Parameters for p modes that follow exactly the asymptotic relation of p modes
 	const long double D0=Dnu_p/100.;
-	const long double delta0l=0.//-el*(el + 1) * delta0l_percent / 100.;
+	const long double delta0l=0.;//-el*(el + 1) * delta0l_percent / 100.;
 
 	// Parameters for g modes that follow exactly the asymptotic relation of g modes for a star with radiative core
 	//const long double alpha=0.;
@@ -1139,7 +1448,7 @@ Data_eigensols test_asymptotic_sg_O2from_l0()
 	// Define global Pulsation parameters
 	// Parameters for p modes that follow exactly the asymptotic relation of p modes
 	//const long double D0=Dnu_p/100.;
-	const long double delta0l=0.//-el*(el + 1) * delta0l_percent / 100.;
+	const long double delta0l=0.;//-el*(el + 1) * delta0l_percent / 100.;
 
 	// Parameters for g modes that follow exactly the asymptotic relation of g modes for a star with radiative core
 	//const long double alpha_g=0.;
@@ -1184,43 +1493,45 @@ Data_eigensols test_asymptotic_sg_O2from_l0()
 	return freqs;
 }
 
-
+/*
 int main(void)
 {
 	//VectorXd nu_m_from_l0, nu_m_from_O2p;
 	Data_eigensols nu_from_l0, nu_from_O2p;
 
-	//std::cout << " Testing solver_mm() for the case of an SubGiant..." << std::endl;
-	//test_sg_solver_mm();
+	std::cout << " Testing solver_mm() for the case of an SubGiant..." << std::endl;
+	test_sg_solver_mm();
 	//std::cout << " Testing solver_mm() the case of a RedGiant..." << std::endl;
 	//test_rgb_solver_mm();
 	//std::cout << " Testing solve_mm_asymptotic_O2p() the case of a RedGiant..." << std::endl;
 	//test_asymptotic_rgb();
-	std::cout << " Testing solve_mm_asymptotic_O2p() the case of a SugGiant..." << std::endl;
-	nu_from_O2p=test_asymptotic_sg_O2();
-	std::cout << " Testing solve_mm_asymptotic_O2from_l0() the case of a SugGiant..." << std::endl;
-	nu_from_l0=test_asymptotic_sg_O2from_l0();
-
-	std::cout << "Comparison O2p and O2from_l0:" << std::endl;
-	std::cout << "nu_m(O2p) : " << nu_from_O2p.nu_m.transpose() << std::endl;
-	std::cout << "nu_m(l0) : " << nu_from_l0.nu_m.transpose() << std::endl;
-
-	std::cout << "nu_m_from_O2p.size()" << nu_from_O2p.nu_m.size() << std::endl;
-	std::cout << "nu_m_from_l0.size()" << nu_from_O2p.nu_m.size() << std::endl;
-	std::cout << "-----" << std::endl;
-
-	std::cout << "nu_p(O2p) : " << nu_from_O2p.nu_p.transpose() << std::endl;
-	std::cout << "nu_p(l0) : " << nu_from_l0.nu_p.transpose() << std::endl;
-
-	std::cout << "nu_p_from_O2p.size()" << nu_from_O2p.nu_p.size() << std::endl;
-	std::cout << "nu_p_from_l0.size()" << nu_from_O2p.nu_p.size() << std::endl;
-	std::cout << "-----" << std::endl;
 	
-	std::cout << "nu_g(O2p) : " << nu_from_O2p.nu_g.transpose() << std::endl;
-	std::cout << "nu_g(l0) : " << nu_from_l0.nu_g.transpose() << std::endl;
+	//std::cout << " Testing solve_mm_asymptotic_O2p() the case of a SugGiant..." << std::endl;
+	//nu_from_O2p=test_asymptotic_sg_O2();
+	//std::cout << " Testing solve_mm_asymptotic_O2from_l0() the case of a SugGiant..." << std::endl;
+	//nu_from_l0=test_asymptotic_sg_O2from_l0();
 
-	std::cout << "nu_g_from_O2p.size()" << nu_from_O2p.nu_g.size() << std::endl;
-	std::cout << "nu_g_from_l0.size()" << nu_from_O2p.nu_g.size() << std::endl;
-	std::cout << "-----" << std::endl;
+	//std::cout << "Comparison O2p and O2from_l0:" << std::endl;
+	//std::cout << "nu_m(O2p) : " << nu_from_O2p.nu_m.transpose() << std::endl;
+	//std::cout << "nu_m(l0) : " << nu_from_l0.nu_m.transpose() << std::endl;
+
+	//std::cout << "nu_m_from_O2p.size()" << nu_from_O2p.nu_m.size() << std::endl;
+	//std::cout << "nu_m_from_l0.size()" << nu_from_O2p.nu_m.size() << std::endl;
+	//std::cout << "-----" << std::endl;
+
+	//std::cout << "nu_p(O2p) : " << nu_from_O2p.nu_p.transpose() << std::endl;
+	//std::cout << "nu_p(l0) : " << nu_from_l0.nu_p.transpose() << std::endl;
+
+	//std::cout << "nu_p_from_O2p.size()" << nu_from_O2p.nu_p.size() << std::endl;
+	//std::cout << "nu_p_from_l0.size()" << nu_from_O2p.nu_p.size() << std::endl;
+	//std::cout << "-----" << std::endl;
+	
+	//std::cout << "nu_g(O2p) : " << nu_from_O2p.nu_g.transpose() << std::endl;
+	//std::cout << "nu_g(l0) : " << nu_from_l0.nu_g.transpose() << std::endl;
+
+	//std::cout << "nu_g_from_O2p.size()" << nu_from_O2p.nu_g.size() << std::endl;
+	//std::cout << "nu_g_from_l0.size()" << nu_from_O2p.nu_g.size() << std::endl;
+	//std::cout << "-----" << std::endl;
 
 }
+*/

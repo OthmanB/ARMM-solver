@@ -62,7 +62,7 @@ return str_splitted;
 }
 
 
-std::vector<int> where_str(std::vector<std::string> vec, std::string value){
+std::vector<int> where_str(const std::vector<std::string> vec, const std::string value){
 /*
  * Gives the indexes of values of an array that match the value
  *
@@ -85,7 +85,7 @@ std::vector<int> where_str(std::vector<std::string> vec, std::string value){
  
 }
 
-std::vector<int> where_dbl(std::vector<double> vec, double value, double tolerance){
+std::vector<int> where_dbl(const std::vector<double> vec, const double value, const double tolerance){
 /*
  * Gives the indexes of values of an array that match the value.
  * A tolerance parameter allows you to control how close the match
@@ -115,7 +115,7 @@ std::vector<int> where_dbl(std::vector<double> vec, double value, double toleran
 	return index;
 }
 
-VectorXi where_dbl(VectorXd vec, double value, double tolerance){
+VectorXi where_dbl(const VectorXd& vec, double value, const double tolerance){
 /*
  * Gives the indexes of values of an array that match the value.
  * A tolerance parameter allows you to control how close the match
@@ -149,16 +149,16 @@ VectorXi where_dbl(VectorXd vec, double value, double tolerance){
 }
 
 
-VectorXi where_in_range(VectorXd vec, double value_min, double value_max, bool strict){
+VectorXi where_in_range(const VectorXd& vec, const double value_min, const double value_max, const bool strict){
 /*
  * Gives the indexes of values of an array within a specified range 
  *
 */
    int cpt;
-   VectorXi index_out;
+   VectorXi index(vec.size());
   
-   std::vector<int> index;
-   index.resize(vec.size());
+   //std::vector<int> index;
+   //index.resize(vec.size());
 	
 	cpt=0;
 	for(int i=0; i<vec.size(); i++){
@@ -175,92 +175,15 @@ VectorXi where_in_range(VectorXd vec, double value_min, double value_max, bool s
 		}		
 	}
 	if(cpt >=1){
-		index_out.resize(cpt);
-		for(int i=0; i<cpt; i++){
-			index_out[i]=index[i];
-		}
+		index.conservativeResize(cpt);
 	} else{
-		index_out.resize(1);
-		index_out[0]=-1;
+		index.resize(1);
+		index[0]=-1;
 	}
-	return index_out;
+	return index;
 }
 
-VectorXi where_greater(VectorXd vec, double value_thld, bool strict){
-/*
- * Gives the indexes of values of an array above a give a value. Test vec > value_thld
- *
-*/
-   int cpt;
-   VectorXi index_out;
-  
-   std::vector<int> index;
-   index.resize(vec.size());
-	
-	cpt=0;
-	for(int i=0; i<vec.size(); i++){
-		if (strict == 1){
-			if(vec[i] > value_thld){
-				index[cpt]=i;
-				cpt=cpt+1;
-			}
-		} else{
-			if(vec[i] >= value_thld){
-				index[cpt]=i;
-				cpt=cpt+1;
-			}		
-		}		
-	}
-	if(cpt >=1){
-		index_out.resize(cpt);
-		for(int i=0; i<cpt; i++){
-			index_out[i]=index[i];
-		}
-	} else{
-		index_out.resize(1);
-		index_out[0]=-1;
-	}
-	return index_out;
-}
-
-VectorXi where_lower(VectorXd vec, double value_thld, bool strict){
-/*
- * Gives the indexes of values of an array above a give a value. Test vec < value_thld
- *
-*/
-   int cpt;
-   VectorXi index_out;
-  
-   std::vector<int> index;
-   index.resize(vec.size());
-	
-	cpt=0;
-	for(int i=0; i<vec.size(); i++){
-		if (strict == 1){
-			if(vec[i] < value_thld){
-				index[cpt]=i;
-				cpt=cpt+1;
-			}
-		} else{
-			if(vec[i] <= value_thld){
-				index[cpt]=i;
-				cpt=cpt+1;
-			}		
-		}		
-	}
-	if(cpt >=1){
-		index_out.resize(cpt);
-		for(int i=0; i<cpt; i++){
-			index_out[i]=index[i];
-		}
-	} else{
-		index_out.resize(1);
-		index_out[0]=-1;
-	}
-	return index_out;
-}
-
-std::vector<int> where_in_range(std::vector<double> vec, double value_min, double value_max, bool strict){
+std::vector<int> where_in_range(const std::vector<double> vec, const double value_min, const double value_max, const bool strict){
 /*
  * Gives the indexes of values of an array within a range.
  * If strict = 1 values have to be strictly within the range. 
@@ -295,8 +218,7 @@ std::vector<int> where_in_range(std::vector<double> vec, double value_min, doubl
 	return index;
 }
 
-
-VectorXi where_int(VectorXi vec, int value){
+VectorXi where_int(const VectorXi& vec, const int value){
 /*
  * Gives the indexes of values of an array that match the value.
  *
@@ -326,7 +248,7 @@ VectorXi where_int(VectorXi vec, int value){
 	return index_out;
 }
 
-std::vector<int> where_int(std::vector<int> vec, int value){
+std::vector<int> where_int(const std::vector<int> vec, const int value){
 /*
  * Gives the indexes of values of an array that match the value.
  *

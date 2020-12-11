@@ -12,4 +12,4 @@
 
 using Eigen::VectorXd;
 
-VectorXd linfit(const VectorXd x, const VectorXd y);
+VectorXd linfit(const VectorXd& x, const VectorXd& y);
