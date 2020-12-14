@@ -37,8 +37,8 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	const long double fmin, const long double fmax, const long double resol, bool returns_pg_freqs=true, bool verbose=false);
 Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd& nu_l0_in, const int el, const long double delta0l, 
     const long double DPl, const long double alpha, const long double q, const long double sigma_p, 
-	const long double resol, bool returns_pg_freqs=true, bool verbose=false);
+	const long double resol, bool returns_pg_freqs=true, bool verbose=false, const long double freq_min=0, const long double freq_max=1e6);
 void test_rgb_solver_mm();
 void test_asymptotic_rgb_O2();
-void test_asymptotic_sg_O2();
-void test_asymptotic_sg_O2from_l0();
+Data_eigensols test_asymptotic_sg_O2();
+Data_eigensols test_asymptotic_sg_O2from_l0();

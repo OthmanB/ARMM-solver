@@ -23,6 +23,7 @@ std::vector<int> where_str(const std::vector<std::string> vec, const std::string
 std::vector<int> where_int(const std::vector<int> vec, const int value);
 VectorXi where_int(const VectorXi& vec, const int value);
 VectorXi where_dbl(const VectorXd& vec, const double value, const double tolerance);
+VectorXi where_dbl(const VectorXd& vec, double value, const double tolerance, const int imin_search, const int imax_search);
 std::vector<int> where_dbl(const std::vector<double> vec, const double value, const double tolerance);
 std::vector<int> where_in_range(const std::vector<double> vec, const double value_min, const double value_max, const bool strict);
 VectorXi where_in_range(const VectorXd& vec, const double value_min, const double value_max, const bool strict);

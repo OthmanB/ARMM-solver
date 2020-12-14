@@ -1,3 +1,11 @@
+### 0.61 ###
+	Bug Fix: 
+		- The vector containing all of the frequencies calculated by the main functions solve_mm_asymptotic_O2from_l0() and solve_mm_asymptotic_O2() were not properly
+		  initialized and handled. This resulted in some compilator (gcc) to randomly show some frequencies due to out of ranges memory pointers.
+	Improvments:
+		- Improvment in the test function 
+	    - New function (handled by do_solve.cpp) that allows to use the solver as a standalone program for getting frequencies and heights of mixed modes
+	    
 ### 0.6  ###
 	- Code rewriten using proper headers that include only constants so that there is no clashes. Vectors from Eigen are as well passed now by reference
 	- Added a main.cpp for tests

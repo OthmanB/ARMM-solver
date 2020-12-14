@@ -888,8 +888,8 @@ Cfg_synthetic_star test_make_synthetic_asymptotic_star_rgb(void){
 	//cfg_star.filetemplate=cpath + "/templates/11771760.template";
 	cfg_star.filetemplate=cpath + "/templates/Sun.template";
 
-	cfg_star.sigma_p=0.0*cfg_star.Dnu_star;
-	cfg_star.sigma_m=0.05*cfg_star.Dnu_star;
+	cfg_star.sigma_p=0; //0.0*cfg_star.Dnu_star;
+	cfg_star.sigma_m=0; //0.05*cfg_star.Dnu_star;
 
 	params_out=make_synthetic_asymptotic_star(cfg_star);
 

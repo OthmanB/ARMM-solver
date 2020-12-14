@@ -126,21 +126,21 @@ VectorXi where_dbl(const VectorXd& vec, double value, const double tolerance){
    int cpt;
    VectorXi index_out;
   
-   std::vector<int> index;
-   index.resize(vec.size());
+   //std::vector<int> index;
+   index_out.resize(vec.size());
 	
 	cpt=0;
 	for(int i=0; i<vec.size(); i++){
 		if(vec[i] > value - tolerance && vec[i] < value + tolerance){
-			index[cpt]=i;
+			index_out[cpt]=i;
 			cpt=cpt+1;
 		}		
 	}
 	if(cpt >=1){
-		index_out.resize(cpt);
-		for(int i=0; i<cpt; i++){
-			index_out[i]=index[i];
-		}
+		index_out.conservativeResize(cpt);
+		//for(int i=0; i<cpt; i++){
+		//	index_out[i]=index[i];
+		//}
 	} else{
 		index_out.resize(1);
 		index_out[0]=-1;
@@ -148,6 +148,38 @@ VectorXi where_dbl(const VectorXd& vec, double value, const double tolerance){
 	return index_out;
 }
 
+VectorXi where_dbl(const VectorXd& vec, double value, const double tolerance, const int imin_search, const int imax_search){
+/*
+ * Gives the indexes of values of an array that match the value.
+ * A tolerance parameter allows you to control how close the match
+ * is considered as acceptable. The tolerance is in the same unit
+ * as the value
+ *
+*/
+   int cpt;
+   VectorXi index_out;
+  
+   //std::vector<int> index;
+   index_out.resize(vec.size());
+	
+	cpt=0;
+	for(int i=imin_search; i<=imax_search; i++){
+		if(vec[i] > value - tolerance && vec[i] < value + tolerance){
+			index_out[cpt]=i;
+			cpt=cpt+1;
+		}		
+	}
+	if(cpt >=1){
+		index_out.conservativeResize(cpt);
+		//for(int i=0; i<cpt; i++){
+		//	index_out[i]=index[i];
+		//}
+	} else{
+		index_out.resize(1);
+		index_out[0]=-1;
+	}
+	return index_out;
+}
 
 VectorXi where_in_range(const VectorXd& vec, const double value_min, const double value_max, const bool strict){
 /*
