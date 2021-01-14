@@ -19,7 +19,7 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXi;
 using Eigen::VectorXd;
-
+/*
 // The general structure that contain the input data (spectrum, lightcurve, ...) that has to be analysed
 struct Data{
 		VectorXd x; // In the case of a 1D fit (e.g. fit of Mass, [Fe/H], ...), this variable will be ignored by the model function.
@@ -92,25 +92,25 @@ struct MCMC_files{
 	std::vector<std::string> common_names_priors;
 	MatrixXd modes_common;
 };
-
+*/
 // Structure that keep information of the derivatives
-struct Deriv_out{
-	VectorXd xderiv;
-	VectorXd deriv;
-	VectorXd error;
-};
+//struct Deriv_out{
+//	VectorXd xderiv;
+//	VectorXd deriv;
+//	VectorXd error;
+//};
 
-struct gnuplt_Data {
+//struct gnuplt_Data {
 /*
  * This is an encapsulator for data when ploting with gnuplot-iostream.h
 */
-    double x;  // x axis value
-    double y1;             // y axis series 1
-    double y2;             // y axis series 2
-    double y3;             // y axis series 3
-};
+//    double x;  // x axis value
+//    double y1;             // y axis series 1
+//    double y2;             // y axis series 2
+//    double y3;             // y axis series 3
+//};
 
-typedef std::vector<gnuplt_Data> gnuplt_Dataset;
+/*typedef std::vector<gnuplt_Data> gnuplt_Dataset;
 
 namespace gnuplotio {
     template<>
@@ -134,11 +134,11 @@ struct Data_Basic{
 	VectorXi vecXi; // Case number
 };
 
-
+*/
 // ----------------------------------------
 // ----- For mixed modes calculation ------
 // ----------------------------------------
-/*struct Data_2vectXd{
+struct Data_2vectXd{
 	VectorXd vecXd1;
 	VectorXd vecXd2;		
 };
@@ -215,4 +215,3 @@ struct Params_synthetic_star{
 	VectorXd a1_l2; 
 	VectorXd a1_l3;
 };
-*/

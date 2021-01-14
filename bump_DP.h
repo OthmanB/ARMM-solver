@@ -18,7 +18,7 @@
 #include <iomanip>
 #include <fstream>
 #include "version_solver.h"
-#include "data.h"
+#include "data_solver.h"
 #include "string_handler.h"
 #include "interpol.h"
 #include "noise_models.h" // get the harvey_1985 function

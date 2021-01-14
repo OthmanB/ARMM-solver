@@ -1,11 +1,8 @@
-### 0.61 ###
-	Bug Fix: 
-		- The vector containing all of the frequencies calculated by the main functions solve_mm_asymptotic_O2from_l0() and solve_mm_asymptotic_O2() were not properly
-		  initialized and handled. This resulted in some compilator (gcc) to randomly show some frequencies due to out of ranges memory pointers.
-	Improvments:
-		- Improvment in the test function 
-	    - New function (handled by do_solve.cpp) that allows to use the solver as a standalone program for getting frequencies and heights of mixed modes
-	    
+### 0.7 ###
+        - Adding parallelisation in solve_mm_asymptotic_O2from_l0() and solve_mm_asymptotic_O2from_nupl() with fixed 4 threads. Not added to solve_mm_asymptotic_O2p()
+        - Adding a filter to avoid any computation when nu_g is beyond the numin / numax range provided in solver_mm(). Might be faster for large number of nu_g
+	- Added a solve_mm_asymptotic_O2from_l0_DEV() for tests... exclusively linked to the test_asymptotic_sg_O2from_l0_DEV() function which is used when generating the test.prg through the test.sh script
+
 ### 0.6  ###
 	- Code rewriten using proper headers that include only constants so that there is no clashes. Vectors from Eigen are as well passed now by reference
 	- Added a main.cpp for tests
