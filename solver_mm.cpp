@@ -529,6 +529,8 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	VectorXd nu_p_all, nu_g_all, nu_m_all(Nmmax), results(Nmmax);	
 	//VectorXd nu_p_all(Nmmax), nu_g_all(Nmmax), nu_m_all(Nmmax), results(Nmmax);
 
+	nu_m_all.setConstant(-9999);
+	
 	Data_coresolver sols_iter;
 	Data_eigensols nu_sols;
 	Deriv_out deriv_p, deriv_g;
@@ -542,6 +544,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 
 	ng_min=int(floor(1e6/(fmax*DPl) - alpha));
 	ng_max=int(ceil(1e6/(fmin*DPl) - alpha));
+
 
 	if (np_min <= 0)
 	{
