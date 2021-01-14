@@ -23,6 +23,11 @@
 #include <iomanip>
 #include <random>
 #include <chrono>
+#ifdef _OPENMP
+   #include <omp.h>
+#else
+   #define omp_get_thread_num() 0
+#endif
 
 #include "version_solver.h"
 #include "data_solver.h"
@@ -603,6 +608,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	//std::cout << "fmax=" << fmax << std::endl;
 	s0m=0;
 //#pragma omp parallel for  num_threads(4) default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+//#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=np_min; np<np_max; np++)
 	{
 		for (ng=ng_min; ng<ng_max;ng++)
@@ -808,7 +814,8 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd& nu_l0_in, const int
 	deriv_g.deriv.setConstant(DPl);
 	
 	s0m=0;
-#pragma omp parallel for  num_threads(4) default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+//#pragma omp parallel for  num_threads(4) default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=0; np<nu_p_all.size(); np++)
 	{
 		for (ng=0; ng<nu_g_all.size();ng++)
@@ -962,7 +969,8 @@ Data_eigensols solve_mm_asymptotic_O2from_l0_DEV(const VectorXd& nu_l0_in, const
 	deriv_g.deriv.setConstant(DPl);
 	
 	s0m=0;
-#pragma omp parallel for  num_threads(4) default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+//#pragma omp parallel for  num_threads(4) default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=0; np<nu_p_all.size(); np++)
 	{
 		for (ng=0; ng<nu_g_all.size();ng++)
@@ -1099,7 +1107,8 @@ Data_eigensols solve_mm_asymptotic_O2from_nupl(const VectorXd& nu_p_all, const i
 	//std::cout << "       solver 4" << std::endl;
 	
 	s0m=0;
-#pragma omp parallel for  num_threads(4) default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+//#pragma omp parallel for  num_threads(4) default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=0; np<nu_p_all.size(); np++)
 	{
 		for (ng=0; ng<nu_g_all.size();ng++)
