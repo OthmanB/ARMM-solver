@@ -12,9 +12,8 @@
 //#include "data.h"
 #include "string_handler.h"
 #include "interpol.h"
-//#include "../../interpol.h"
-#include "derivatives_handler.h" // FOR STANDALONE SOLVER ONLY
-//#include "../../derivatives_handler.h"
+//#include "derivatives_handler.h" // FOR STANDALONE SOLVER ONLY
+#include "derivatives_handler.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXi;

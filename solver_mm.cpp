@@ -33,8 +33,8 @@
 #include "data_solver.h"
 #include "string_handler.h"
 #include "interpol.h"
-//#include "../../interpol.h"
 #include "derivatives_handler.h"
+#include "interpol.h"
 #include "linfit.h"
 #include "linspace.h"
 
@@ -285,7 +285,6 @@ VectorXd asympt_nu_p_from_l0_Xd(const VectorXd& nu_l0, const long double Dnu_p, 
 long double asympt_nu_g(const long double DPl, const int ng, const long double alpha, long double r=0)
 {
 	const long double Pl=(ng + alpha)*DPl;
-	//std::cout << "ng = " << ng << "  Pl =" << Pl <<  "     r= " << r << std::endl;
 	return 1e6/(Pl+r);
 }
 
@@ -603,7 +602,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	//std::cout << "fmin=" << fmin << std::endl;
 	//std::cout << "fmax=" << fmax << std::endl;
 	s0m=0;
-//#pragma omp parallel for default(shared) private(np, np_min, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+#pragma omp parallel for default(shared) private(np, np_min, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=0; np<nu_p_all.size(); np++)
 	{
 		for (ng=0; ng<nu_g_all.size();ng++)
@@ -782,7 +781,7 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd& nu_l0_in, const int
 	deriv_g.deriv.setConstant(DPl);
 	
 	s0m=0;
-//#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=0; np<nu_p_all.size(); np++)
 	{
 		for (ng=0; ng<nu_g_all.size();ng++)
@@ -936,7 +935,7 @@ Data_eigensols solve_mm_asymptotic_O2from_l0_DEV(const VectorXd& nu_l0_in, const
 	deriv_g.deriv.setConstant(DPl);
 	
 	s0m=0;
-//#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=0; np<nu_p_all.size(); np++)
 	{
 		for (ng=0; ng<nu_g_all.size();ng++)
@@ -948,7 +947,7 @@ Data_eigensols solve_mm_asymptotic_O2from_l0_DEV(const VectorXd& nu_l0_in, const
 			Dnu_p_local=deriv_p.deriv[np]; 
 			DPl_local=DPl; // The solver needs here d(nu_g)/dng. Here we assume no core glitches so that it is the same as DPl. 	
 			sols_iter=solver_mm(nu_p, nu_g, Dnu_p_local, DPl_local, q, nu_p - 1.75*Dnu_p, nu_p + 1.75*Dnu_p, resol, returns_axis, verbose, fact);
-			//printf("np = %d, ng= %d, threadId = %d \n", np, ng, omp_get_thread_num());
+			printf("np = %d, ng= %d, threadId = %d \n", np, ng, omp_get_thread_num());
 
 			for (int s=0;s<sols_iter.nu_m.size();s++)
 			{
@@ -1067,7 +1066,7 @@ Data_eigensols solve_mm_asymptotic_O2from_nupl(const VectorXd& nu_p_all, const i
 	//std::cout << "       solver 4" << std::endl;
 	
 	s0m=0;
-//#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
+#pragma omp parallel for default(shared) private(np, ng, nu_p, nu_g, sols_iter, test, Dnu_p_local, DPl_local)
 	for (np=0; np<nu_p_all.size(); np++)
 	{
 		for (ng=0; ng<nu_g_all.size();ng++)

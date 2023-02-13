@@ -1,3 +1,11 @@
+### 0.76 ##
+	- Adding a cmake compilation capability that generate 3 executables in a bin directory:
+		- ARMMsolver executable: built using the do_solve.cpp as a main program
+		- solver_test executable: built using the test.cpp as a main program
+		- solver_test2 executable: built using the main.cpp as a main program
+	Note that the last two are basically testing programs (despite the name of the cpp file of the second one)
+	The first one is the only one that is supposed to be the main program
+
 ### 0.75 ##
 	- Adding new elements in cfg_star in order to allow the user to provide Stellar model-based input frequencies instead of asymptotic. Note that the asymptotic is still used to compute Widths, Heights and rotation for the two zone case. The new parameters are:
 			- cfg_star.nu_nl : Input frequencies to be used for l=0, l=1, l=2 and l=3. Must be a matrix type
