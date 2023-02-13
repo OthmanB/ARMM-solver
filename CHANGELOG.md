@@ -1,11 +1,27 @@
-### 0.61 ###
-	Bug Fix: 
-		- The vector containing all of the frequencies calculated by the main functions solve_mm_asymptotic_O2from_l0() and solve_mm_asymptotic_O2() were not properly
-		  initialized and handled. This resulted in some compilator (gcc) to randomly show some frequencies due to out of ranges memory pointers.
-	Improvments:
-		- Improvment in the test function 
-	    - New function (handled by do_solve.cpp) that allows to use the solver as a standalone program for getting frequencies and heights of mixed modes
-	    
+### 0.76 ##
+	- Adding a cmake compilation capability that generate 3 executables in a bin directory:
+		- ARMMsolver executable: built using the do_solve.cpp as a main program
+		- solver_test executable: built using the test.cpp as a main program
+		- solver_test2 executable: built using the main.cpp as a main program
+	Note that the last two are basically testing programs (despite the name of the cpp file of the second one)
+	The first one is the only one that is supposed to be the main program
+
+### 0.75 ##
+	- Adding new elements in cfg_star in order to allow the user to provide Stellar model-based input frequencies instead of asymptotic. Note that the asymptotic is still used to compute Widths, Heights and rotation for the two zone case. The new parameters are:
+			- cfg_star.nu_nl : Input frequencies to be used for l=0, l=1, l=2 and l=3. Must be a matrix type
+			- cfg_star.use_nu_nl : If true, uses the frequencies provided in cfg_star.nu_nl
+	Note that the following (old) parameters MUST also be provided in order for the function work:
+			- cfg_star.Dnu_star : Can be calculated eg from a stellar model sound speed
+			- cfg_star.DPl_star : Can also be calculated theoretically
+			- cfg_star.q_star
+			- cfg_star.alpha_g_star
+	epsilon_p_star delta_0l will be calculated within make_synthetic_asymptotic_star, if cfg_star.use_nu_nl = true
+
+### 0.7 ###
+        - Adding parallelisation in solve_mm_asymptotic_O2from_l0() and solve_mm_asymptotic_O2from_nupl() with fixed 4 threads. Not added to solve_mm_asymptotic_O2p()
+        - Adding a filter to avoid any computation when nu_g is beyond the numin / numax range provided in solver_mm(). Might be faster for large number of nu_g
+	- Added a solve_mm_asymptotic_O2from_l0_DEV() for tests... exclusively linked to the test_asymptotic_sg_O2from_l0_DEV() function which is used when generating the test.prg through the test.sh script
+
 ### 0.6  ###
 	- Code rewriten using proper headers that include only constants so that there is no clashes. Vectors from Eigen are as well passed now by reference
 	- Added a main.cpp for tests

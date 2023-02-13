@@ -1,6 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-
 ###### Git
 .gitattributes text
 .gitignore text
@@ -185,31 +184,3 @@ Procfile text
 *.project text
 *.classpath text
 *.prefs
-
-##### Language
-# C/C++
-*.c text
-*.cc text
-*.cxx text
-*.cpp text
-*.c++ text
-*.hpp text
-*.h text
-*.h++ text
-*.hh text
-*.slo binary
-*.lo binary
-*.o binary
-*.obj binary
-*.gch binary
-*.pch binary
-*.so binary
-*.dylib binary
-*.dll binary
-*.lai binary
-*.la binary
-*.a binary
-*.lib binary
-*.exe binary
-*.out binary
-*.app binary
