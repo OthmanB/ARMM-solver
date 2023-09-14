@@ -514,7 +514,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 	//const int Npmax=100;
 	//const int Ngmax=2000;
 	const int Nmmax=5000; //Ngmax+Npmax;
-	const int Nmax_attempts=4;
+	//const int Nmax_attempts=4;
 	const double tol=2*resol; // Tolerance while searching for double solutions of mixed modes
 	//const double sigma_g=0;  // FOR SOME REASON, WE FIND MULTIPLE SOLUTIONS WITHIN A NARROW RANGE WHEN USING SIGMA_G... SO IT TURNED IT OFF
 

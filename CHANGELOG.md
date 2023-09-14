@@ -1,3 +1,9 @@
+### 1.00 ##
+	Major changes:
+                - Included options handling in ARMMSolver. 
+                - Scan_range_solver: New program that use ARMMSolver iteratively to scan a range of values for a given parameter. Check options with the --help option
+                - Old tests function were removed.
+ 
 ### 0.76 ##
 	- Adding a cmake compilation capability that generate 3 executables in a bin directory:
 		- ARMMsolver executable: built using the do_solve.cpp as a main program

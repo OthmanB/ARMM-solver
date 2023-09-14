@@ -546,7 +546,9 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	VectorXd nu_l0, nu_m_l1, nu_l2, nu_l3, 
 		height_l0, height_l1, height_l2, height_l3, height_l1p, 
 		width_l0, width_l1, width_l2, width_l3,
-		a1_l1, a1_l2, a1_l3; // Simulate a single harvey profile
+		a1_l1, a1_l2, a1_l3, // Average rotations
+		a2_l1, a2_l2, a2_l3, a4_l2, a4_l3, a6_l3, // Activity or Magnetic effects
+		a3_l2, a3_l3, a5_l3; // Latitudinal differential rotation effects
 
 	Data_2vectXd width_height_l0;
 	Data_rot2zone rot2data;
@@ -713,7 +715,7 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	// Assume that the l=2 modes are only sensitive to the envelope rotation
 	a1_l2.resize(nu_l2.size());
 	a1_l2.setConstant(rot2data.rot_env);
-	
+
 	// ------ l=3 modes ----
 	el=3;
 	delta0l_star=-el*(el + 1) * cfg_star.delta0l_percent_star / 100.;
@@ -741,6 +743,38 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	a1_l3.resize(nu_l3.size());
 	a1_l3.setConstant(rot2data.rot_env);//=numpy.repeat(rot_env, len(nu_l3))
 
+	//-----  ADDED ON 13 Sept -----
+	// Implementation of the latitudinal differential rotation for outer layers
+	// This uses the new substructure env_lat_dif_rot that has all its values initialised to 0 
+	// by default. This dummy value is used to identify the different scenarios.
+	// Implementation of a3 and a5 is possible in various ways. 
+	// However, we recommend using only two situations due to the quality of the available data
+	// (unless your a3,a5 values come from eg a rotational model). that is Inside cfg_star.env_lat_dif_rot Either:
+	//      - a3_l2, a3_l3 and a5_l3 are set to 0, then this is a case without differential rotation
+	//      - a3_l2 = a3_l3 set to some values ~ few percent of a1. And keep a5_l3 =0
+	a3_l2.resize(nu_l2.size());
+	a3_l3.resize(nu_l3.size());
+	a5_l3.resize(nu_l3.size());
+	a3_l2.setConstant(cfg_star.env_lat_dif_rot.a3_l2);
+	a3_l3.setConstant(cfg_star.env_lat_dif_rot.a3_l3);
+	a5_l3.setConstant(cfg_star.env_lat_dif_rot.a5_l3);
+	// Implementation of asphericity parameters. As for the differential rotation, the recommendation is 
+	// to keep it to 0 (default value), unless you have a model of eg activity and magnetic effects
+	a2_l1.resize(nu_m_l1.size());
+	a2_l2.resize(nu_l2.size());
+	a2_l3.resize(nu_l3.size());
+	a4_l2.resize(nu_l2.size());
+	a4_l3.resize(nu_l3.size());
+	a6_l3.resize(nu_l3.size());
+	a2_l1.setZero();
+	a2_l2.setZero();
+	a2_l3.setZero();
+	a4_l2.setZero();
+	a4_l3.setZero();
+	a6_l3.setZero();
+
+	// ----- 
+
 	params_out.nu_l0=nu_l0;
 	params_out.nu_p_l1=freqs.nu_p;
 	params_out.nu_g_l1=freqs.nu_g;
@@ -758,7 +792,13 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	params_out.a1_l1=a1_l1;
 	params_out.a1_l2=a1_l2;
 	params_out.a1_l3=a1_l3;
-		
+	params_out.a2_l1=a2_l1;
+	params_out.a2_l2=a2_l2;
+	params_out.a2_l3=a2_l3;
+	params_out.a4_l2=a4_l2;
+	params_out.a4_l3=a4_l3;
+	params_out.a6_l3=a6_l3;
+
 	return params_out;
 }
 
