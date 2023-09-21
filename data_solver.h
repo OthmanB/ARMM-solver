@@ -14,8 +14,6 @@
 #include <vector>
 #include "gnuplot-iostream.h"
 
-//using namespace std;
-
 using Eigen::MatrixXd;
 using Eigen::VectorXi;
 using Eigen::VectorXd;
@@ -53,13 +51,20 @@ struct Data_rot2zone{
 	long double rot_core, rot_env;
 };
 
-struct Envelope_lat_dif_rot{
-	std::string dif_rot_type; // Can be either "avg_a3" for the envelope (then a3_l2 = a3_l3) or "a3_l"
-	long double a3_l2=0;
+struct Envelope_lat_dif_rot{ // Added on 13 Sep 2023
+	long double a3_l2=0; 
 	long double a3_l3=0;
 	long double a5_l3=0;
 };
 
+struct Envelope_asphericity{
+	long double a2_l1; // Added on 13 Sep 2023
+	long double a2_l2; // Added on 13 Sep 2023
+	long double a2_l3; // Added on 13 Sep 2023
+	long double a4_l2; // Added on 13 Sep 2023
+	long double a4_l3; // Added on 13 Sep 2023
+	long double a6_l3; // Added on 13 Sep 2023
+};
 struct Cfg_synthetic_star{
 	long double Teff_star; 
 	long double numax_star;
@@ -81,6 +86,7 @@ struct Cfg_synthetic_star{
 	long double rot_ratio_input; 
 	long double rot_core_input;
 	Envelope_lat_dif_rot env_lat_dif_rot; // Added on 13 Sep 2023
+	Envelope_asphericity env_aspher;
 	std::string output_file_rot;
 	VectorXd Vl;
 	long double H0_spread;
@@ -89,6 +95,7 @@ struct Cfg_synthetic_star{
 	long double sigma_m;
 	long double Hfactor;
 	long double Wfactor;
+	long double inclination;
 };
 
 

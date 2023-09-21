@@ -1,3 +1,11 @@
+### 1.10 ##
+	Major changes:
+		- optimisation of linfit: gain of x2, see unit test
+		- optimisation and careful parallelisation of ksi_fct2. Gains increases drastically up to 4 cores according unit tests. 
+		- optimisation and careful parallelisation for *O2 *froml0 and *from_npl. a typical gain of core/2 (eg 4 thread ==>  x2)
+		- replacement of my own linspace by the Eigen one. Gives a few % gains
+		- proper handling of openMP in the cmake file. And addition of the apple switch. 
+		  note that for MAC OS, you need to install with brew llvm and use the correct CXX and C flags to their own clang and clang++ version. Otherwise, OPEN_MP is not recognized
 ### 1.00 ##
 	Major changes:
                 - Included options handling in ARMMSolver. 

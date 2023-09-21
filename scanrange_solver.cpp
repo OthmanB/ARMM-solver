@@ -52,9 +52,9 @@ int main(int argc, char* argv[]){
         ("pmin", po::value<double>(&keyvalmin)->default_value(0.0), "minimum value for the scanned parameter")
         ("pmax", po::value<double>(&keyvalmax)->default_value(1.0), "maximum value for the scanned parameter")
         ("step,S", po::value<double>(&keystep)->default_value(0.1), "step size for the scanned parameter")
-        ("input-template-file,I", po::value<std::string>(&file_in)->default_value("../tests/template.cfg"), "input template file used for fixed parameters")
-        ("tmp-cfg-file", po::value<std::string>(&cfg_file_tmp)->default_value("../tests/tmp/template_mod.cfg"), "file of the temporary config file that is created iteratively")
-        ("file-results-root", po::value<std::string>(&file_out_root)->default_value("../tests/out/out_"), "output file root name")
+        ("input-template-file,I", po::value<std::string>(&file_in)->default_value("../config/scanner.cfg"), "input template file used for fixed parameters")
+        ("tmp-cfg-file", po::value<std::string>(&cfg_file_tmp)->default_value("../tests/scanner/tmp/template_mod.cfg"), "file of the temporary config file that is created iteratively")
+        ("file-results-root", po::value<std::string>(&file_out_root)->default_value("../tests/scanner/out/out_"), "output file root name")
         ("path-solver", po::value<std::string>(&path_solver)->default_value(""), "path to the ARMMsolver program");
 
     po::variables_map vm;
@@ -62,6 +62,9 @@ int main(int argc, char* argv[]){
     po::notify(vm);
 
     if (vm.count("help")) {
+        std::cout << "This program allows you to run iteratively the ARMMSolver in order to scan a range of a given parameter" << std::endl;
+        std::cout << "By default, it scans q_star and allows you to get the mixed modes frequencies as well as the zeta function " << std::endl;
+        std::cout << "For further details on options, refers to the options explanations below " << std::endl;
         std::cout << desc << std::endl;
         return 1;
     }
