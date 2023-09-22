@@ -94,7 +94,7 @@ Eigen::VectorXd ksi_fct2_precise(const Eigen::VectorXd& nu, const Eigen::VectorX
             ksi_highres += ksi2_highres_local;
         }
     }
-    #pragma omp barrier
+    //#pragma omp barrier # Removed on 22 Sept 2023: When integrated in CPP TAMCMC, this causes a stall of the MCMC. And it is in fact not usefull
     const long double norm_coef = ksi_highres.maxCoeff();
     ksi_pg=ksi_pg/norm_coef;
     
