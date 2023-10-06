@@ -1,8 +1,14 @@
+/**
+ * @file version.h
+ * @brief Header that contains version information.
+ *
+ * This file contains the version information for the ARMM solver application. It defines constants for the application ID, name, description, version number, domain, site, and copyright.
+ *
+ * @note This file is included in other source files to access the version information.
+ */
 void showversion();
 void writeversion();
-/* 
-	Header that contains version information
-*/
+
 #ifndef __VERSION_H__
 #define __VERSION_H__
 

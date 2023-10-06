@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['nchains_0',['Nchains',['../struct_params__hdr.html#a6236db682a3daa42e1e8efee8f71396c',1,'Params_hdr']]],
+  ['ncons_1',['Ncons',['../struct_params__hdr.html#a339bd24fe0d546fffa31fc7382f37a11',1,'Params_hdr']]],
+  ['nmax_5fstar_2',['nmax_star',['../struct_cfg__synthetic__star.html#ab4299b53fcc2d56cd132e73901b3aedf',1,'Cfg_synthetic_star']]],
+  ['noise_5fparams_3',['noise_params',['../struct_m_c_m_c__files.html#a44b628008ac33a3c4bda88effa0146bb',1,'MCMC_files']]],
+  ['noise_5fparams_5fharvey_5flike_4',['noise_params_harvey_like',['../struct_cfg__synthetic__star.html#a90883721e41650f35b1a0919cd10a5f9',1,'Cfg_synthetic_star']]],
+  ['noise_5fs2_5',['noise_s2',['../struct_m_c_m_c__files.html#a46a0691ae5049182b537131c8d198753',1,'MCMC_files']]],
+  ['nsamples_6',['Nsamples',['../struct_params__hdr.html#a28a854b4516ecdbb4bb08f7f44296869',1,'Params_hdr']]],
+  ['nu_7',['nu',['../struct_data__coresolver.html#a3bbb45e53e21a61af1830848640191ac',1,'Data_coresolver']]],
+  ['nu_5fg_8',['nu_g',['../struct_data__eigensols.html#ac1e9494b20f391c40b22c686042e5da9',1,'Data_eigensols']]],
+  ['nu_5fg_5fl1_9',['nu_g_l1',['../struct_params__synthetic__star.html#af1e56e629545c22f1162200bf814b156',1,'Params_synthetic_star']]],
+  ['nu_5fl0_10',['nu_l0',['../struct_params__synthetic__star.html#aceb544932b0e1d2f7bb721f5011cf5b1',1,'Params_synthetic_star']]],
+  ['nu_5fl2_11',['nu_l2',['../struct_params__synthetic__star.html#a080ff979309b422e171a6f75c7f3e5b1',1,'Params_synthetic_star']]],
+  ['nu_5fl3_12',['nu_l3',['../struct_params__synthetic__star.html#aef5dabd6625b391dd426655484748b7b',1,'Params_synthetic_star']]],
+  ['nu_5fm_13',['nu_m',['../struct_data__coresolver.html#aa87bffe08a9df571deb32d910b54f801',1,'Data_coresolver::nu_m'],['../struct_data__eigensols.html#a34e9bd0598a0548f8ed16d37b183af04',1,'Data_eigensols::nu_m']]],
+  ['nu_5fm_5fl1_14',['nu_m_l1',['../struct_params__synthetic__star.html#acb443a82ed7b1deb2cfafc6fe33c6c2c',1,'Params_synthetic_star']]],
+  ['nu_5fp_15',['nu_p',['../struct_data__eigensols.html#ac32836c85212589d6fb4581d5719e41b',1,'Data_eigensols']]],
+  ['nu_5fp_5fl1_16',['nu_p_l1',['../struct_params__synthetic__star.html#a5eb1dbf0a1e7d5a608c1a3aeeab4940e',1,'Params_synthetic_star']]],
+  ['numax_17',['numax',['../struct_m_c_m_c__files.html#a871e7d94a64b25212a096bc8b2053a64',1,'MCMC_files']]],
+  ['numax_5fref_18',['numax_ref',['../structtemplate__file.html#adcffa180a78c246d6640b6b25c07085b',1,'template_file']]],
+  ['numax_5fstar_19',['numax_star',['../struct_cfg__synthetic__star.html#a89519baedec1d831931980fe4d7cd582',1,'Cfg_synthetic_star']]],
+  ['nvars_20',['Nvars',['../struct_params__hdr.html#aac0a9ad382c372eb4048fd05e177eda4',1,'Params_hdr']]],
+  ['nx_21',['Nx',['../struct_data.html#afd698f13cca21ec39494e166bbc5707d',1,'Data']]]
+];
