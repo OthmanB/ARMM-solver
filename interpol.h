@@ -1,5 +1,5 @@
 /**
- * @file interpol.cpp
+ * @file interpol.h
  * @brief A collection of functions for interpolation and resampling of arrays.
  */
 

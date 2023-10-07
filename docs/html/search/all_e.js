@@ -1,14 +1,13 @@
 var searchData=
 [
-  ['h0_5fspread_0',['H0_spread',['../struct_cfg__synthetic__star.html#aa2852d6c24c719fcc01ebb7319101d62',1,'Cfg_synthetic_star']]],
-  ['h_5fl_5frgb_1',['h_l_rgb',['../bump___d_p_8h.html#af2c893531aae9f2b772591ea66b57a7d',1,'h_l_rgb(const VectorXd &amp;ksi_pg, const long double factor=1.0):&#160;bump_DP.cpp'],['../bump___d_p_8cpp.html#a68f066f21a116c30448ba2ef92101dcf',1,'h_l_rgb(const VectorXd &amp;ksi_pg, const long double factor):&#160;bump_DP.cpp']]],
-  ['harvey1985_2',['harvey1985',['../noise__models_8h.html#a56e54edb40d8c36e4ba9d87389b3f3bf',1,'harvey1985(const VectorXd &amp;noise_params, const VectorXd &amp;x, const VectorXd &amp;y, const int Nharvey):&#160;noise_models.cpp'],['../noise__models_8cpp.html#a56e54edb40d8c36e4ba9d87389b3f3bf',1,'harvey1985(const VectorXd &amp;noise_params, const VectorXd &amp;x, const VectorXd &amp;y, const int Nharvey):&#160;noise_models.cpp']]],
-  ['harvey_5flike_3',['harvey_like',['../noise__models_8h.html#a2ed93d49c88ecbff1565e9a70b8490b4',1,'harvey_like(const VectorXd &amp;noise_params, const VectorXd &amp;x, const VectorXd &amp;y, const int Nharvey):&#160;noise_models.cpp'],['../noise__models_8cpp.html#a2ed93d49c88ecbff1565e9a70b8490b4',1,'harvey_like(const VectorXd &amp;noise_params, const VectorXd &amp;x, const VectorXd &amp;y, const int Nharvey):&#160;noise_models.cpp']]],
-  ['header_4',['header',['../struct_params__hdr.html#a2eac04b2c2d3844208307526faa9ec7b',1,'Params_hdr::header'],['../struct_data.html#ac5c64e514f73bb4fbed7f96bdc3130a2',1,'Data::header'],['../struct_data___nd.html#aff237e9118fe3ddea46e9c515917251a',1,'Data_Nd::header']]],
-  ['height_5fl0_5',['height_l0',['../struct_params__synthetic__star.html#a6a9694813c60ff1f4959e1b8912576b5',1,'Params_synthetic_star']]],
-  ['height_5fl1_6',['height_l1',['../struct_params__synthetic__star.html#a5d47fe9e8e92d775c87f1959a9ca1aec',1,'Params_synthetic_star']]],
-  ['height_5fl2_7',['height_l2',['../struct_params__synthetic__star.html#ad05a4c46ff7861fadcae1cd46d6f2d62',1,'Params_synthetic_star']]],
-  ['height_5fl3_8',['height_l3',['../struct_params__synthetic__star.html#ae0734472cc241a619b304f329f8c88a2',1,'Params_synthetic_star']]],
-  ['hfactor_9',['Hfactor',['../struct_cfg__synthetic__star.html#aca8246788851d4b32bf1903e6be41adc',1,'Cfg_synthetic_star']]],
-  ['hyper_5fpriors_10',['hyper_priors',['../struct_m_c_m_c__files.html#a5dfd9d9b2dfa1d551aaa42906f50d492',1,'MCMC_files']]]
+  ['parabola_0',['parabola',['../interpol_8cpp.html#a9d6719f5add3c0862a9adcc15c6b39db',1,'parabola(const long double x, const long double f_1, const long double f0, const long double f1):&#160;interpol.cpp'],['../interpol_8h.html#a9d6719f5add3c0862a9adcc15c6b39db',1,'parabola(const long double x, const long double f_1, const long double f0, const long double f1):&#160;interpol.cpp']]],
+  ['param_5ftype_1',['param_type',['../struct_m_c_m_c__files.html#a67ae8232d2698e9e3c3c49c61215fb6e',1,'MCMC_files']]],
+  ['params_5fhdr_2',['Params_hdr',['../struct_params__hdr.html',1,'']]],
+  ['params_5fsynthetic_5fstar_3',['Params_synthetic_star',['../struct_params__synthetic__star.html',1,'']]],
+  ['plength_4',['plength',['../struct_input___data.html#ab39f80b33fc95ad83e33ad3b068f742b',1,'Input_Data::plength'],['../struct_params__hdr.html#a1ec539558a1cab6da6b53b4caa89081e',1,'Params_hdr::plength']]],
+  ['pnu_5',['pnu',['../struct_data__coresolver.html#adb31b992d1a0e5d5f93ca54ef648d730',1,'Data_coresolver']]],
+  ['pnu_5ffct_6',['pnu_fct',['../solver__mm_8h.html#affd4a636255ac3acfdd75333e37428b4',1,'pnu_fct(const long double nu, const long double nu_p):&#160;solver_mm.cpp'],['../solver__mm_8cpp.html#a48b6a717060f253ff64c81da3aff4107',1,'pnu_fct(const VectorXd &amp;nu, const long double nu_p):&#160;solver_mm.cpp'],['../solver__mm_8cpp.html#affd4a636255ac3acfdd75333e37428b4',1,'pnu_fct(const long double nu, const long double nu_p):&#160;solver_mm.cpp'],['../solver__mm_8h.html#a48b6a717060f253ff64c81da3aff4107',1,'pnu_fct(const VectorXd &amp;nu, const long double nu_p):&#160;solver_mm.cpp']]],
+  ['priors_7',['priors',['../struct_input___data.html#a576136f9a68a3db4ba43389d4c866910',1,'Input_Data']]],
+  ['priors_5fnames_8',['priors_names',['../struct_input___data.html#a6ce323a02f0ab716fa651a33a01a8677',1,'Input_Data']]],
+  ['priors_5fnames_5fswitch_9',['priors_names_switch',['../struct_input___data.html#a955ca21ec712971d43ad763c412a752d',1,'Input_Data']]]
 ];

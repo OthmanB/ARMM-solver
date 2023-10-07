@@ -40,7 +40,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXi;
 using Eigen::VectorXd;
 
-/**
+/* *
  * @brief Removes duplicate values from a given EigenVectorXd.
  * @param nu_m_all The input EigenVectorXd.
  * @param tol The tolerance for considering two values as duplicates.
@@ -68,7 +68,7 @@ Eigen::VectorXd removeDuplicates(const Eigen::VectorXd& nu_m_all, double tol) {
     return uniqueVec;
 }
 
-/**
+/* *
  * @brief Function that detects sign changes in a given vector.
  * If the sign went from + to -, tag it with a -1.
  * If the sign went from - to +, tag it with a +1.
@@ -114,7 +114,7 @@ VectorXi sign_change(const VectorXd& x, bool return_indices=true)
 	}
 }
 
-/**
+/* *
  * @brief Calculates the difference between each element of the input vector and a given value.
  * @param nu The input vector.
  * @param nu_p The value to subtract from each element of the vector.
@@ -134,7 +134,7 @@ VectorXd pnu_fct(const VectorXd& nu, const long double nu_p)
 	}
 }
 
-/**
+/* *
  * @brief Calculates the difference between a single value and a given value.
  * @param nu The input value.
  * @param nu_p The value to subtract from the input value.
@@ -146,7 +146,7 @@ long double pnu_fct(const long double nu, const long double nu_p)
 	return pnu;
 }
 
-/**
+/* *
  * @brief Calculates the gnu function for each element of the input vector.
  * @param nu The input vector.
  * @param nu_g The value of nu_g.
@@ -167,7 +167,7 @@ VectorXd gnu_fct(const VectorXd& nu, const long double nu_g, const long double D
 	return gnu;
 }
 
-/**
+/* *
  * @brief Calculates the gnu function for a single value.
  * @param nu The input value.
  * @param nu_g The value of nu_g.
@@ -186,7 +186,7 @@ long double gnu_fct(const long double nu, const long double nu_g, const long dou
 	return gnu;
 }
 
-/**
+/* *
  * @brief A small function that generates a series of p modes using the asymptotic relation at the second order.
  * @param Dnu_p The value of Dnu_p.
  * @param np The value of np.
@@ -214,7 +214,7 @@ long double asympt_nu_p(const long double Dnu_p, const int np, const long double
 }
 
 
-/**
+/* *
  * @brief A small function that generates a series of p modes based on a shifting of a series of l=0 modes and on the asymptotic relation.
  * @param nu_l0 The input vector of l=0 modes.
  * @param Dnu_p The value of Dnu_p.
@@ -248,7 +248,7 @@ long double asympt_nu_p_from_l0(const VectorXd& nu_l0, const long double Dnu_p, 
 	return nu_p_l+r;
 }
 
-/**
+/* *
  * @brief A small function that generates a series of p modes based on a shifting of a series of l=0 modes and on the asymptotic relation.
  * @param nu_l0 The input vector of l=0 modes.
  * @param Dnu_p The value of Dnu_p.
@@ -302,7 +302,7 @@ VectorXd asympt_nu_p_from_l0_Xd(const VectorXd& nu_l0, const long double Dnu_p, 
 	return nu_l1;
 }
 
-/**
+/* *
  * @brief Compute the asymptotic relation for the g modes.
  * @param DPl The value of DPl.
  * @param ng The value of ng.
@@ -317,7 +317,7 @@ long double asympt_nu_g(const long double DPl, const int ng, const long double a
 }
 
 
-/**
+/* *
  * @brief Solve the mixed mode asymptotic relation between p modes and g modes.
  * This the main function that solves the mixed mode asymptotic relation which is of the type p(nu) = g(nu)
  *	This solver specifically solve the case:
@@ -446,7 +446,7 @@ Data_coresolver solver_mm(const long double nu_p, const long double nu_g, const 
 	}
 }
 
-/**
+/* *
  * @brief Solve the mixed mode asymptotic relation between p modes and g modes.
  * @param Dnu_p The large separation for p modes (in microHz).
  * @param epsilon The value of epsilon.
@@ -587,7 +587,7 @@ Data_eigensols solve_mm_asymptotic_O2p(const long double Dnu_p, const long doubl
 
 
 
-/**
+/* *
  * @brief Solve the mixed mode asymptotic relation between p modes and g modes using l=0 frequencies as input.
  * @param nu_l0_in Frequencies for the l=0 modes. Used to derive nu_l1_p and therefore Dnu and epsilon.
  * @param el Degree of the mode.
@@ -715,7 +715,7 @@ Data_eigensols solve_mm_asymptotic_O2from_l0(const VectorXd& nu_l0_in, const int
 }
 
 
-/**
+/* *
  * @brief Solve the mixed mode asymptotic relation between p modes and g modes using l=0 frequencies as input.
  * @param nu_p_all Frequencies for the l=0 modes. Used to derive nu_l1_p and therefore Dnu and epsilon.
  * @param el Degree of the mode.

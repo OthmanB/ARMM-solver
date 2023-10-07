@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">ARMMSolver<span id="projectnumber">&#160;1.1.1</span>
+   <div id="projectname">ARMMSolver
    </div>
   </td>
  </tr>
@@ -117,10 +117,12 @@ VectorXd&#160;</td><td class="memItemRight" valign="bottom"><b>freqs_ref</b></td
 <tr class="separator:a8b5aeab31cf52f3760c1a9d6bb91eff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5db83c3e4fe4081d0f04e20fab4d337e" id="r_a5db83c3e4fe4081d0f04e20fab4d337e"><td class="memItemLeft" align="right" valign="top"><a id="a5db83c3e4fe4081d0f04e20fab4d337e" name="a5db83c3e4fe4081d0f04e20fab4d337e"></a>
 std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>relax_freq</b></td></tr>
+<tr class="memdesc:a5db83c3e4fe4081d0f04e20fab4d337e"><td class="mdescLeft">&#160;</td><td class="mdescRight">indicate if a specific frequency is fixed or fitted. <br /></td></tr>
 <tr class="separator:a5db83c3e4fe4081d0f04e20fab4d337e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9d9ca6a90d9011bcee3ebacacb3d2b5" id="r_ae9d9ca6a90d9011bcee3ebacacb3d2b5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_m_c_m_c__files.html#ae9d9ca6a90d9011bcee3ebacacb3d2b5">relax_gamma</a></td></tr>
-<tr class="memdesc:ae9d9ca6a90d9011bcee3ebacacb3d2b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">indicate if a specific frequency is fixed or fitted.  <br /></td></tr>
-<tr class="separator:ae9d9ca6a90d9011bcee3ebacacb3d2b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fd5aecdb564343a45e7e966ea85515d" id="r_a6fd5aecdb564343a45e7e966ea85515d"><td class="memItemLeft" align="right" valign="top"><a id="a6fd5aecdb564343a45e7e966ea85515d" name="a6fd5aecdb564343a45e7e966ea85515d"></a>
+std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>relax_gamma</b></td></tr>
+<tr class="memdesc:a6fd5aecdb564343a45e7e966ea85515d"><td class="mdescLeft">&#160;</td><td class="mdescRight">indicate if a specific mode width is fixed or fitted. <br /></td></tr>
+<tr class="separator:a6fd5aecdb564343a45e7e966ea85515d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae634288b310560fab218793f7a7b592c" id="r_ae634288b310560fab218793f7a7b592c"><td class="memItemLeft" align="right" valign="top"><a id="ae634288b310560fab218793f7a7b592c" name="ae634288b310560fab218793f7a7b592c"></a>
 std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>relax_H</b></td></tr>
 <tr class="memdesc:ae634288b310560fab218793f7a7b592c"><td class="mdescLeft">&#160;</td><td class="mdescRight">indicate if a specific mode height is fixed or fitted. <br /></td></tr>
@@ -157,25 +159,7 @@ MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><b>modes_common</b><
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Structure that keeps information about MCMC files. </p>
 <p>This structure is used to hold information about MCMC files. It includes variables for ID, Dnu, numax, C_l, els, freq_range, param_type, freqs_ref, relax_freq, relax_gamma, relax_H, hyper_priors, eigen_params, noise_params, noise_s2, common_names, common_names_priors, and modes_common. </p>
-</div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="ae9d9ca6a90d9011bcee3ebacacb3d2b5" name="ae9d9ca6a90d9011bcee3ebacacb3d2b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9d9ca6a90d9011bcee3ebacacb3d2b5">&#9670;&#160;</a></span>relax_gamma</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; bool &gt; MCMC_files::relax_gamma</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>indicate if a specific frequency is fixed or fitted. </p>
-<p>indicate if a specific mode width is fixed or fitted. </p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/Users/obenomar/Documents/GitHub/ARMM-solver/<a class="el" href="data_8h_source.html">data.h</a></li>
 </ul>
 </div><!-- contents -->

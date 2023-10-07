@@ -1,5 +1,0 @@
-/Users/obenomar/Documents/GitHub/ARMM-solver/build/CMakeFiles/ARMMSolver.dir
-/Users/obenomar/Documents/GitHub/ARMM-solver/build/CMakeFiles/scan_range_solver.dir
-/Users/obenomar/Documents/GitHub/ARMM-solver/build/CMakeFiles/make_star.dir
-/Users/obenomar/Documents/GitHub/ARMM-solver/build/CMakeFiles/edit_cache.dir
-/Users/obenomar/Documents/GitHub/ARMM-solver/build/CMakeFiles/rebuild_cache.dir

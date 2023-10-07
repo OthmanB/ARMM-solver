@@ -1,5 +1,5 @@
 /**
- * @file data.h
+ * @file data_solver.h
  * @brief Header file that contains all kinds of classes/structures used to process and/or encapsulate data.
  *
  * This file contains the declarations for various classes and structures used to process and encapsulate data. It provides functionality for mixed modes calculation, simulations, core solver data, eigen solutions data, rotation to zone data, envelope asphericity data, synthetic star configuration data, and synthetic star parameter data.
@@ -71,8 +71,8 @@ struct Data_eigensols{
 	VectorXd nu_p; ///< Frequencies of p modes used to compute mixed modes.
 	VectorXd nu_g; ///< Frequencies of g modes used to compute mixed modes.
 	VectorXd nu_m; ///< Frequencies of mixed modes.
-	VectorXd dnup; ///< Frequency derivatives for p modes ~ $\Delta\nu$.
-	VectorXd dPg;  ///< Frequency derivatives for g modes ~ $\Delta\Pi_l$.
+	VectorXd dnup; ///< Frequency derivatives for p modes ~ &Delta&nu;.
+	VectorXd dPg;  ///< Frequency derivatives for g modes ~ &Delta&Pi.
 };
 
 /**
@@ -150,7 +150,7 @@ struct Cfg_synthetic_star{
 	long double rot_env_input; ///< average stellar envelope rotation.
 	long double rot_ratio_input; ///< average ratio between core and envelope rotation rot_core/rot_env.
 	long double rot_core_input; ///< average stellar core rotation .
-	Envelope_lat_dif_rot env_lat_dif_rot; // Structure with odds a-coeficients j={3,5} (latitudinal differential information).
+	Envelope_lat_dif_rot env_lat_dif_rot; ///< Structure with odds a-coeficients j={3,5} (latitudinal differential information).
 	Envelope_asphericity env_aspher; ///< Structure with the even a-coeficients j={2,4,6} (asphericity information).
 	std::string output_file_rot; ///< Output file for rotation information.
 	VectorXd Vl; ///< Bolometric mode visibility for l={1,2,3}.
@@ -161,9 +161,9 @@ struct Cfg_synthetic_star{
 	long double Hfactor; ///< Empirical correction factor to the asymptotic for l=1 heights (mixed modes).
 	long double Wfactor; ///< Empirical correction factor to the asymptotic for l=1 widths  (mixed modes).
 	long double inclination; ///< Stellar inclination
-	MatrixXd nu_nl; // Frequencies of the modes, are here if provided by a template (e.g a theoretical model) and handled by the MCMC model
-	VectorXi Nf_el; // The numbers of modes 
-	bool use_nu_nl=false; // If set to true, use the nu_nl frequencies instead of computing them from the asymptotic. These must be set
+	MatrixXd nu_nl; ///< Frequencies of the modes, are here if provided by a template (e.g a theoretical model) and handled by the MCMC model
+	VectorXi Nf_el; ///< The numbers of modes 
+	bool use_nu_nl=false; ///< If set to true, use the nu_nl frequencies instead of computing them from the asymptotic. These must be set
 };
 
 

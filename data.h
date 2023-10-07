@@ -2,7 +2,7 @@
  * @file data.h
  * @brief Header file that contains all kinds of classes/structures used to process and encapsulate data.
  * 
- * This file contains the declarations for various classes and structures used to process and encapsulate data. It provides functionality for storing input data, model inputs and priors, generic data with metadata, parameter headers, MCMC files, derivatives, gnuplot data, and basic data.
+ * This file contains the declarations for various classes and structures used to process and encapsulate data. It provides functionality for storing input data, model inputs and priors, generic data with metadata, parameter headers, model files, derivatives, gnuplot data, and basic data. This is mostly for MCMC analysis.
  * 
  * @date 22 Feb 2016
  * @author obenomar
@@ -102,7 +102,7 @@ struct MCMC_files{
 	VectorXd freq_range; ///< Range of frequencies included in the fit.
 	std::vector<std::string> param_type; ///< Either p, g or m. Indicates the type of modes.
 	VectorXd freqs_ref; ///< List of frequencies.
-	std::vector<bool> relax_freq, relax_gamma; ///< indicate if a specific frequency is fixed or fitted.
+	std::vector<bool> relax_freq; ///< indicate if a specific frequency is fixed or fitted.
 	std::vector<bool> relax_gamma; ///< indicate if a specific mode width is fixed or fitted.
 	std::vector<bool> relax_H; ///< indicate if a specific mode height is fixed or fitted.
 	VectorXd hyper_priors; ///< Hyper priors information.

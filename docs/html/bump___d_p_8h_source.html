@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">ARMMSolver<span id="projectnumber">&#160;1.1.1</span>
+   <div id="projectname">ARMMSolver
    </div>
   </td>
  </tr>
@@ -85,10 +85,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;iomanip&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;fstream&gt;</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;version_solver.h&quot;</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &quot;data_solver.h&quot;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;<a class="code" href="version__solver_8h.html">version_solver.h</a>&quot;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &quot;<a class="code" href="data__solver_8h.html">data_solver.h</a>&quot;</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &quot;<a class="code" href="string__handler_8h.html">string_handler.h</a>&quot;</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &quot;interpol.h&quot;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &quot;<a class="code" href="interpol_8h.html">interpol.h</a>&quot;</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;<a class="code" href="noise__models_8h.html">noise_models.h</a>&quot;</span> <span class="comment">// get the harvey_1985 function</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &quot;<a class="code" href="solver__mm_8h.html">solver_mm.h</a>&quot;</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#ifdef _OPENMP</span></div>
@@ -138,6 +138,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="abump___d_p_8h_html_acb8a1399ab0dc7d413789afb38497905"><div class="ttname"><a href="bump___d_p_8h.html#acb8a1399ab0dc7d413789afb38497905">gamma_l_fct2</a></div><div class="ttdeci">VectorXd gamma_l_fct2(const VectorXd &amp;ksi_pg, const VectorXd &amp;nu_m, const VectorXd &amp;nu_p_l0, const VectorXd &amp;width_l0, const VectorXd &amp;hl_h0_ratio, const int el, const long double factor=1.0)</div><div class="ttdoc">Calculates the mode width of mixed modes based on the given ksi_pg, nu_m, nu_p_l0,...</div><div class="ttdef"><b>Definition</b> bump_DP.cpp:203</div></div>
 <div class="ttc" id="abump___d_p_8h_html_af2c893531aae9f2b772591ea66b57a7d"><div class="ttname"><a href="bump___d_p_8h.html#af2c893531aae9f2b772591ea66b57a7d">h_l_rgb</a></div><div class="ttdeci">VectorXd h_l_rgb(const VectorXd &amp;ksi_pg, const long double factor=1.0)</div><div class="ttdoc">Calculates the H(l)/H(l=0) ratio based on the given ksi_pg and a factor.</div><div class="ttdef"><b>Definition</b> bump_DP.cpp:235</div></div>
 <div class="ttc" id="abump___d_p_8h_html_af39be32ef8277be6aed321eed67a4684"><div class="ttname"><a href="bump___d_p_8h.html#af39be32ef8277be6aed321eed67a4684">width_height_load_rescale</a></div><div class="ttdeci">Data_2vectXd width_height_load_rescale(const VectorXd &amp;nu_star, const long double Dnu_star, const long double numax_star, const std::string file)</div><div class="ttdoc">Loads and rescales data from a file based on reference values.</div><div class="ttdef"><b>Definition</b> bump_DP.cpp:368</div></div>
+<div class="ttc" id="adata__solver_8h_html"><div class="ttname"><a href="data__solver_8h.html">data_solver.h</a></div><div class="ttdoc">Header file that contains all kinds of classes/structures used to process and/or encapsulate data.</div></div>
+<div class="ttc" id="ainterpol_8h_html"><div class="ttname"><a href="interpol_8h.html">interpol.h</a></div><div class="ttdoc">A collection of functions for interpolation and resampling of arrays.</div></div>
 <div class="ttc" id="anoise__models_8h_html"><div class="ttname"><a href="noise__models_8h.html">noise_models.h</a></div><div class="ttdoc">Functions for generating noise models.</div></div>
 <div class="ttc" id="asolver__mm_8h_html"><div class="ttname"><a href="solver__mm_8h.html">solver_mm.h</a></div><div class="ttdoc">Contains functions for solving the asymptotic relation of the mixed modes.</div></div>
 <div class="ttc" id="astring__handler_8h_html"><div class="ttname"><a href="string__handler_8h.html">string_handler.h</a></div><div class="ttdoc">Header file containing utility functions for string manipulation.</div></div>
@@ -146,6 +148,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astruct_data__rot2zone_html"><div class="ttname"><a href="struct_data__rot2zone.html">Data_rot2zone</a></div><div class="ttdoc">Structure for rotation to zone data.</div><div class="ttdef"><b>Definition</b> data_solver.h:95</div></div>
 <div class="ttc" id="astruct_params__synthetic__star_html"><div class="ttname"><a href="struct_params__synthetic__star.html">Params_synthetic_star</a></div><div class="ttdoc">Structure for synthetic star parameter data.</div><div class="ttdef"><b>Definition</b> data_solver.h:176</div></div>
 <div class="ttc" id="astructtemplate__file_html"><div class="ttname"><a href="structtemplate__file.html">template_file</a></div><div class="ttdoc">Structure for simulations to derive height and widths of modes.</div><div class="ttdef"><b>Definition</b> data_solver.h:42</div></div>
+<div class="ttc" id="aversion__solver_8h_html"><div class="ttname"><a href="version__solver_8h.html">version_solver.h</a></div><div class="ttdoc">Header that contains version information.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

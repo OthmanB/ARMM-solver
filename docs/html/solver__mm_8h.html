@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">ARMMSolver<span id="projectnumber">&#160;1.1.1</span>
+   <div id="projectname">ARMMSolver
    </div>
   </td>
  </tr>
@@ -85,10 +85,10 @@ $(function() {
 <code>#include &lt;iomanip&gt;</code><br />
 <code>#include &lt;random&gt;</code><br />
 <code>#include &lt;chrono&gt;</code><br />
-<code>#include &quot;version_solver.h&quot;</code><br />
-<code>#include &quot;data_solver.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="version__solver_8h_source.html">version_solver.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="data__solver_8h_source.html">data_solver.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="string__handler_8h_source.html">string_handler.h</a>&quot;</code><br />
-<code>#include &quot;interpol.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="interpol_8h_source.html">interpol.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="derivatives__handler_8h_source.html">derivatives_handler.h</a>&quot;</code><br />
 </div>
 <p><a href="solver__mm_8h_source.html">Go to the source code of this file.</a></p>
@@ -617,16 +617,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The resulting value.</dd></dl>
-<p>Calculates the difference between a single value and a given value.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">nu</td><td>The input vector. </td></tr>
-    <tr><td class="paramname">nu_p</td><td>The value to subtract from each element of the vector. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The resulting vector. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The resulting value. </dd></dl>
 
 </div>
 </div>
@@ -764,25 +755,25 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>returns_pg_freqs</em>, </td>
+          <td class="paramname"><em>returns_pg_freqs</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>verbose</em>, </td>
+          <td class="paramname"><em>verbose</em> = <code>false</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_min</em>, </td>
+          <td class="paramname"><em>freq_min</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_max</em>&#160;</td>
+          <td class="paramname"><em>freq_max</em> = <code>1e6</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -866,25 +857,25 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>returns_pg_freqs</em>, </td>
+          <td class="paramname"><em>returns_pg_freqs</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>verbose</em>, </td>
+          <td class="paramname"><em>verbose</em> = <code>false</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_min</em>, </td>
+          <td class="paramname"><em>freq_min</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_max</em>&#160;</td>
+          <td class="paramname"><em>freq_max</em> = <code>1e6</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -898,23 +889,6 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nu_p_all</td><td>Frequencies for the l modes. </td></tr>
-    <tr><td class="paramname">el</td><td>Degree of the mode. </td></tr>
-    <tr><td class="paramname">DPl</td><td>Average Period spacing of the g modes. </td></tr>
-    <tr><td class="paramname">alpha</td><td>Phase offset for the g modes. </td></tr>
-    <tr><td class="paramname">q</td><td>Coupling strength. </td></tr>
-    <tr><td class="paramname">sigma_p</td><td>Standard deviation controlling the randomization of individual p modes. Set it to 0 for no spread. </td></tr>
-    <tr><td class="paramname">resol</td><td>Control the grid resolution. Might be set to the resolution of the spectrum. </td></tr>
-    <tr><td class="paramname">returns_pg_freqs</td><td>If true, returns the values for calculated p and g modes. </td></tr>
-    <tr><td class="paramname">verbose</td><td>If true, print the solution on screen. </td></tr>
-    <tr><td class="paramname">freq_min</td><td>The minimum frequency considered for the solution (in microHz). </td></tr>
-    <tr><td class="paramname">freq_max</td><td>The maximum frequency considered for the solution (in microHz). </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A structure with the solutions that match p(nu) = g(nu).</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">nu_p_all</td><td>Frequencies for the l=0 modes. Used to derive nu_l1_p and therefore Dnu and epsilon. </td></tr>
     <tr><td class="paramname">el</td><td>Degree of the mode. </td></tr>
     <tr><td class="paramname">DPl</td><td>Average Period spacing of the g modes. </td></tr>
     <tr><td class="paramname">alpha</td><td>Phase offset for the g modes. </td></tr>
@@ -1020,13 +994,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>returns_pg_freqs</em>, </td>
+          <td class="paramname"><em>returns_pg_freqs</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>verbose</em>&#160;</td>
+          <td class="paramname"><em>verbose</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1155,24 +1129,6 @@ Functions</h2></td></tr>
     <tr><td class="paramname">returns_axis</td><td>If true, returns nu, pnu, and gnu. </td></tr>
     <tr><td class="paramname">verbose</td><td>If true, print additional information. </td></tr>
     <tr><td class="paramname">factor</td><td>Define how fine the new tiny grid used for performing the interpolation will be. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A structure with the solutions that match p(nu) = g(nu).</dd></dl>
-<p>Solve the mixed mode asymptotic relation between p modes and g modes.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">nu_p</td><td>The frequency of a given p-mode (in microHz). </td></tr>
-    <tr><td class="paramname">nu_g</td><td>The frequency of a given g-mode (in microHz). </td></tr>
-    <tr><td class="paramname">Dnu_p</td><td>The large separation for p modes (in microHz). </td></tr>
-    <tr><td class="paramname">DPl</td><td>The period spacing for g modes (in seconds). </td></tr>
-    <tr><td class="paramname">q</td><td>The coupling term (no unit, should be between 0 and 1). </td></tr>
-    <tr><td class="paramname">numin</td><td>The minimum frequency considered for the solution (in microHz). </td></tr>
-    <tr><td class="paramname">numax</td><td>The maximum frequency considered for the solution (in microHz). </td></tr>
-    <tr><td class="paramname">resol</td><td>The base resolution for the interpolated base function. The interpolation may miss solutions if this is set too low. Typically, the resolution parameter should be higher than the spectral resolution of your spectrum so that all resolved modes should be found. </td></tr>
-    <tr><td class="paramname">returns_axis</td><td>If true, returns nu, pnu, and gnu. </td></tr>
-    <tr><td class="paramname">verbose</td><td>If true, print additional information. </td></tr>
-    <tr><td class="paramname">factor</td><td>Define how fine the new tiny grid used for performing the interpolation will be. This is important to avoid extrapolation (which is forbiden and will result in crash of the code). Typically, the default value factor=0.05 can compute mixed modes for frequency down to 80microHz. Going below requires a smaller factor. </td></tr>
   </table>
   </dd>
 </dl>

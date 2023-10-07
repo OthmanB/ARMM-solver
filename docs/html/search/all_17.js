@@ -1,18 +1,10 @@
 var searchData=
 [
-  ['read_5ftemplatefile_0',['read_templatefile',['../bump___d_p_8cpp.html#a7e0292785f729d13fe114ce0c8554129',1,'read_templatefile(const std::string file, const bool ignore_errors):&#160;bump_DP.cpp'],['../bump___d_p_8h.html#a5e34ad7d28857de46e6c4936501e1164',1,'read_templatefile(const std::string file, const bool ignore_errors=true):&#160;bump_DP.cpp']]],
-  ['readparameterfile_1',['readParameterFile',['../readparams__job_8cpp.html#aa9aa26a1af4eb325c258e29715a511b6',1,'readparams_job.cpp']]],
-  ['readparams_5fjob_2ecpp_2',['readparams_job.cpp',['../readparams__job_8cpp.html',1,'']]],
-  ['relax_3',['relax',['../struct_input___data.html#aa1ec00115c49dd2b3b5812a091b95dac',1,'Input_Data::relax'],['../struct_params__hdr.html#a234c99655dd2323096302af36eef6fbd',1,'Params_hdr::relax']]],
-  ['relax_5fgamma_4',['relax_gamma',['../struct_m_c_m_c__files.html#ae9d9ca6a90d9011bcee3ebacacb3d2b5',1,'MCMC_files']]],
-  ['relax_5fh_5',['relax_H',['../struct_m_c_m_c__files.html#ae634288b310560fab218793f7a7b592c',1,'MCMC_files']]],
-  ['removeduplicates_6',['removeduplicates',['../solver__mm_8h.html#a9b7fe1aa0f0083fc0603550e23d41696',1,'removeDuplicates(const Eigen::VectorXd &amp;nu_m_all, double tol):&#160;solver_mm.cpp'],['../solver__mm_8cpp.html#a9b7fe1aa0f0083fc0603550e23d41696',1,'removeDuplicates(const Eigen::VectorXd &amp;nu_m_all, double tol):&#160;solver_mm.cpp']]],
-  ['rot_5f2zones_5fv2_7',['rot_2zones_v2',['../bump___d_p_8h.html#a2d3fcfa64aad16d28e5f09b9d0e8768d',1,'rot_2zones_v2(const long double rot_envelope, const long double core2envelope_star, std::string output_file_rot=&quot; &quot;):&#160;bump_DP.cpp'],['../bump___d_p_8cpp.html#a7fc7fa1e50e82ef213ac96c86a23dc59',1,'rot_2zones_v2(const long double rot_envelope, const long double core2envelope_star, std::string output_file_rot):&#160;bump_DP.cpp']]],
-  ['rot_5f2zones_5fv3_8',['rot_2zones_v3',['../bump___d_p_8h.html#aca33daeff913509ca4bee42de7ffb0b8',1,'rot_2zones_v3(const long double rot_envelope, const long double rot_core, std::string output_file_rot=&quot; &quot;):&#160;bump_DP.cpp'],['../bump___d_p_8cpp.html#a37ce54feb9cd023be30b5e0f97f0bf88',1,'rot_2zones_v3(const long double rot_envelope, const long double rot_core, std::string output_file_rot):&#160;bump_DP.cpp']]],
-  ['rot_5fcore_9',['rot_core',['../struct_data__rot2zone.html#ae631432f2e29bc2b8a0186c0898fa2cf',1,'Data_rot2zone']]],
-  ['rot_5fcore_5finput_10',['rot_core_input',['../struct_cfg__synthetic__star.html#a94816556e52d6d81366f615d68c8ec74',1,'Cfg_synthetic_star']]],
-  ['rot_5fenv_11',['rot_env',['../struct_data__rot2zone.html#a35d64e76ec071bb42ab03a29d8acb081',1,'Data_rot2zone']]],
-  ['rot_5fenv_5finput_12',['rot_env_input',['../struct_cfg__synthetic__star.html#a30712380d1fa2b4213620758c094135b',1,'Cfg_synthetic_star']]],
-  ['rot_5fenvelope_13',['rot_envelope',['../bump___d_p_8cpp.html#aab630af9de049c0647dfec3c1206a9ac',1,'rot_envelope(long double med, long double sigma):&#160;bump_DP.cpp'],['../bump___d_p_8h.html#a90650eb7806f55b5ebf0554254c78f50',1,'rot_envelope(long double med=60., long double sigma=3.):&#160;bump_DP.cpp']]],
-  ['rot_5fratio_5finput_14',['rot_ratio_input',['../struct_cfg__synthetic__star.html#a3e48fb376643863a98468e0aa089569b',1,'Cfg_synthetic_star']]]
+  ['y_0',['y',['../struct_data.html#a486090c4faed19c12e0e7bc40a7ace95',1,'Data']]],
+  ['y1_1',['y1',['../structgnuplt___data.html#af732ec882fe3b81ac0c1071d3d1461db',1,'gnuplt_Data']]],
+  ['y2_2',['y2',['../structgnuplt___data.html#ae92a40ff0c06bfff48077968c22a7264',1,'gnuplt_Data']]],
+  ['y3_3',['y3',['../structgnuplt___data.html#a7320ec500a6540bad45a98bcd10ed2c7',1,'gnuplt_Data']]],
+  ['ylabel_4',['ylabel',['../struct_data.html#a0dc80c2b8746a56560dd7d9ea9a9c57f',1,'Data']]],
+  ['ysol_5',['ysol',['../struct_data__coresolver.html#adad7b4d533a82c4afe44e29571650e25',1,'Data_coresolver']]],
+  ['yunit_6',['yunit',['../struct_data.html#a6e9b7a1e4abfdf60fa6d69264115ffc7',1,'Data']]]
 ];

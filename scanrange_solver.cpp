@@ -1,5 +1,5 @@
 /**
- * @file scan_range_solver.cpp
+ * @file scanrange_solver.cpp
  * @brief This file contains the implementation of the main function for scanning a range of a given parameter using ARMMSolver.
  */
 #include <iostream>

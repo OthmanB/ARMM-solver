@@ -1,5 +1,5 @@
 /**
- * @file readparams_job.cpp
+ * @file readparams_job.h
  * @brief Functions for reading parameters for make_star
  *
  * This file contains a function that can read a parameter file for make_star

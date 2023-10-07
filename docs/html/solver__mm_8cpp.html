@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">ARMMSolver<span id="projectnumber">&#160;1.1.1</span>
+   <div id="projectname">ARMMSolver
    </div>
   </td>
  </tr>
@@ -85,10 +85,10 @@ $(function() {
 <code>#include &lt;iomanip&gt;</code><br />
 <code>#include &lt;random&gt;</code><br />
 <code>#include &lt;chrono&gt;</code><br />
-<code>#include &quot;version_solver.h&quot;</code><br />
-<code>#include &quot;data_solver.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="version__solver_8h_source.html">version_solver.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="data__solver_8h_source.html">data_solver.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="string__handler_8h_source.html">string_handler.h</a>&quot;</code><br />
-<code>#include &quot;interpol.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="interpol_8h_source.html">interpol.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="derivatives__handler_8h_source.html">derivatives_handler.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="linfit_8h_source.html">linfit.h</a>&quot;</code><br />
 </div><table class="memberdecls">
@@ -107,7 +107,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:adb6406497c5082b2be7e90eddd9e9be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that detects sign changes in a given vector. If the sign went from + to -, tag it with a -1. If the sign went from - to +, tag it with a +1. If there is no change of sign, tag it with a 0. 0 is dealt as a zone of change of sign as well. eg. if we pass from 0 to 2, then the result is +1.  <br /></td></tr>
 <tr class="separator:adb6406497c5082b2be7e90eddd9e9be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48b6a717060f253ff64c81da3aff4107" id="r_a48b6a717060f253ff64c81da3aff4107"><td class="memItemLeft" align="right" valign="top">VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="solver__mm_8cpp.html#a48b6a717060f253ff64c81da3aff4107">pnu_fct</a> (const VectorXd &amp;nu, const long double nu_p)</td></tr>
-<tr class="memdesc:a48b6a717060f253ff64c81da3aff4107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the difference between each element of the input vector and a given value.  <br /></td></tr>
+<tr class="memdesc:a48b6a717060f253ff64c81da3aff4107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the difference between a single value and a given value.  <br /></td></tr>
 <tr class="separator:a48b6a717060f253ff64c81da3aff4107"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affd4a636255ac3acfdd75333e37428b4" id="r_affd4a636255ac3acfdd75333e37428b4"><td class="memItemLeft" align="right" valign="top">long double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="solver__mm_8cpp.html#affd4a636255ac3acfdd75333e37428b4">pnu_fct</a> (const long double nu, const long double nu_p)</td></tr>
 <tr class="memdesc:affd4a636255ac3acfdd75333e37428b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the difference between a single value and a given value.  <br /></td></tr>
@@ -131,7 +131,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a4122d1afa4cf609cd680a7f8a45f83a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the asymptotic relation for the g modes.  <br /></td></tr>
 <tr class="separator:a4122d1afa4cf609cd680a7f8a45f83a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40a1897f146bc7b6ab1feff4471ec4cb" id="r_a40a1897f146bc7b6ab1feff4471ec4cb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_data__coresolver.html">Data_coresolver</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="solver__mm_8cpp.html#a40a1897f146bc7b6ab1feff4471ec4cb">solver_mm</a> (const long double nu_p, const long double nu_g, const long double Dnu_p, const long double DPl, const long double q, const long double numin, const long double numax, const long double resol, const bool returns_axis=false, const bool verbose=false, const long double factor=0.05)</td></tr>
-<tr class="memdesc:a40a1897f146bc7b6ab1feff4471ec4cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve the mixed mode asymptotic relation between p modes and g modes. This the main function that solves the mixed mode asymptotic relation which is of the type p(nu) = g(nu) This solver specifically solve the case: nu - nu_p = Dnu*arctan(q tan(1/(nu DPl) - 1/(nu_g*DPl))) It tries to find the intersect between p(nu) and g(nu) using an interpolation and over a range of frequency such that nu is in [numin, numax].  <br /></td></tr>
+<tr class="memdesc:a40a1897f146bc7b6ab1feff4471ec4cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve the mixed mode asymptotic relation between p modes and g modes.  <br /></td></tr>
 <tr class="separator:a40a1897f146bc7b6ab1feff4471ec4cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dd04463533c6df6365c2d1f517068d8" id="r_a0dd04463533c6df6365c2d1f517068d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_data__eigensols.html">Data_eigensols</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="solver__mm_8cpp.html#a0dd04463533c6df6365c2d1f517068d8">solve_mm_asymptotic_O2p</a> (const long double Dnu_p, const long double epsilon, const int el, const long double delta0l, const long double alpha_p, const long double nmax, const long double DPl, const long double alpha, const long double q, const long double sigma_p, const long double fmin, const long double fmax, const long double resol, bool returns_pg_freqs, bool verbose)</td></tr>
 <tr class="memdesc:a0dd04463533c6df6365c2d1f517068d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve the mixed mode asymptotic relation between p modes and g modes.  <br /></td></tr>
@@ -608,16 +608,15 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculates the difference between each element of the input vector and a given value. </p>
-<p>Calculates the difference between a single value and a given value.</p>
+<p>Calculates the difference between a single value and a given value. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nu</td><td>The input vector. </td></tr>
-    <tr><td class="paramname">nu_p</td><td>The value to subtract from each element of the vector. </td></tr>
+    <tr><td class="paramname">nu</td><td>The input value. </td></tr>
+    <tr><td class="paramname">nu_p</td><td>The value to subtract from the input value. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The resulting vector. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The resulting value. </dd></dl>
 
 </div>
 </div>
@@ -755,25 +754,25 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>returns_pg_freqs</em>, </td>
+          <td class="paramname"><em>returns_pg_freqs</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>verbose</em>, </td>
+          <td class="paramname"><em>verbose</em> = <code>false</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_min</em>, </td>
+          <td class="paramname"><em>freq_min</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_max</em>&#160;</td>
+          <td class="paramname"><em>freq_max</em> = <code>1e6</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -857,25 +856,25 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>returns_pg_freqs</em>, </td>
+          <td class="paramname"><em>returns_pg_freqs</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>verbose</em>, </td>
+          <td class="paramname"><em>verbose</em> = <code>false</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_min</em>, </td>
+          <td class="paramname"><em>freq_min</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const long double&#160;</td>
-          <td class="paramname"><em>freq_max</em>&#160;</td>
+          <td class="paramname"><em>freq_max</em> = <code>1e6</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -888,7 +887,7 @@ Functions</h2></td></tr>
 <p>Solve the mixed mode asymptotic relation between p modes and g modes using l=0 frequencies as input. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nu_p_all</td><td>Frequencies for the l=0 modes. Used to derive nu_l1_p and therefore Dnu and epsilon. </td></tr>
+    <tr><td class="paramname">nu_p_all</td><td>Frequencies for the l modes. </td></tr>
     <tr><td class="paramname">el</td><td>Degree of the mode. </td></tr>
     <tr><td class="paramname">DPl</td><td>Average Period spacing of the g modes. </td></tr>
     <tr><td class="paramname">alpha</td><td>Phase offset for the g modes. </td></tr>
@@ -994,13 +993,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>returns_pg_freqs</em>, </td>
+          <td class="paramname"><em>returns_pg_freqs</em> = <code>true</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>verbose</em>&#160;</td>
+          <td class="paramname"><em>verbose</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1115,8 +1114,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Solve the mixed mode asymptotic relation between p modes and g modes. This the main function that solves the mixed mode asymptotic relation which is of the type p(nu) = g(nu) This solver specifically solve the case: nu - nu_p = Dnu*arctan(q tan(1/(nu DPl) - 1/(nu_g*DPl))) It tries to find the intersect between p(nu) and g(nu) using an interpolation and over a range of frequency such that nu is in [numin, numax]. </p>
-<p>Solve the mixed mode asymptotic relation between p modes and g modes.</p>
+<p>Solve the mixed mode asymptotic relation between p modes and g modes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nu_p</td><td>The frequency of a given p-mode (in microHz). </td></tr>
@@ -1126,10 +1124,10 @@ Functions</h2></td></tr>
     <tr><td class="paramname">q</td><td>The coupling term (no unit, should be between 0 and 1). </td></tr>
     <tr><td class="paramname">numin</td><td>The minimum frequency considered for the solution (in microHz). </td></tr>
     <tr><td class="paramname">numax</td><td>The maximum frequency considered for the solution (in microHz). </td></tr>
-    <tr><td class="paramname">resol</td><td>The base resolution for the interpolated base function. The interpolation may miss solutions if this is set too low. Typically, the resolution parameter should be higher than the spectral resolution of your spectrum so that all resolved modes should be found. </td></tr>
+    <tr><td class="paramname">resol</td><td>The base resolution for the interpolated base function. </td></tr>
     <tr><td class="paramname">returns_axis</td><td>If true, returns nu, pnu, and gnu. </td></tr>
     <tr><td class="paramname">verbose</td><td>If true, print additional information. </td></tr>
-    <tr><td class="paramname">factor</td><td>Define how fine the new tiny grid used for performing the interpolation will be. This is important to avoid extrapolation (which is forbiden and will result in crash of the code). Typically, the default value factor=0.05 can compute mixed modes for frequency down to 80microHz. Going below requires a smaller factor. </td></tr>
+    <tr><td class="paramname">factor</td><td>Define how fine the new tiny grid used for performing the interpolation will be. </td></tr>
   </table>
   </dd>
 </dl>

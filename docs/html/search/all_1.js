@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['1_2000_0',['1.00',['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html#autotoc_md1',1,'']]],
-  ['1_2010_1',['1.10',['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html',1,'']]],
-  ['10_2',['1.10',['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html',1,'']]],
-  ['100_3',['100',['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html#autotoc_md10',1,'0.2alpha [100%]'],['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html#autotoc_md8',1,'0.35alpha [100%]'],['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html#autotoc_md9',1,'0.3alpha [100%]'],['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html#autotoc_md6',1,'0.55 [100%]']]],
-  ['1alpha_20done_4',['0.1alpha [DONE]',['../md__2_users_2obenomar_2_documents_2_git_hub_2_a_r_m_m-solver_2_c_h_a_n_g_e_l_o_g.html#autotoc_md11',1,'']]]
+  ['beta_5fp_5fstar_0',['beta_p_star',['../struct_cfg__synthetic__star.html#ab46c900eddc9d46be6af1f14bb0cfdc2',1,'Cfg_synthetic_star']]],
+  ['bump_5fdp_2ecpp_1',['bump_DP.cpp',['../bump___d_p_8cpp.html',1,'']]],
+  ['bump_5fdp_2eh_2',['bump_DP.h',['../bump___d_p_8h.html',1,'']]],
+  ['bumpoutputs_5f2_5fmatrixxd_5fwith_5faj_3',['bumpoutputs_2_MatrixXd_with_aj',['../writeparams__job_8h.html#a7bdf91ef7f1e339d44b41d687a10ebc1',1,'writeparams_job.cpp']]]
 ];

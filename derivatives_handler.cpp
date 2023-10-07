@@ -1,5 +1,5 @@
 /**
- * @file derivatives_handler.h
+ * @file derivatives_handler.cpp
  * @brief A set of function to compute derivation
  * 
  * This is a set of function that can compute the first and second derivatives for any discrete function
