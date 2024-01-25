@@ -659,7 +659,6 @@ Params_synthetic_star make_synthetic_asymptotic_star(Cfg_synthetic_star cfg_star
 	height_l0=width_height_l0.vecXd2;
 	noise_l0.resize(nu_l0.size());
 	noise_l0.setZero();
-	std::cout << "legacynoise = " << legacynoise << std::endl;
 	if(legacynoise == true){
 		noise_l0=harvey1985(noise_params_harvey1985, nu_l0, noise_l0, 1); // Iterate on Noise_l0 to update it by putting the noise profile with one harvey profile
 	} else{
